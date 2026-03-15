@@ -1,0 +1,2473 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Quantum Draft — AXIOM Career Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <style>
+    :root {
+      --teal: #00d4aa;
+      --teal-dim: #00a888;
+      --teal-deep: #007a63;
+      --teal-glow: #00d4aa40;
+      --teal-glass: #00d4aa14;
+      --teal-line: #00d4aa28;
+      --green: #00ff88;
+      --green-glow: #00ff8830;
+      --bg: #030912;
+      --bg2: #060d1a;
+      --bg3: #0a1628;
+      --bg4: #0d1f35;
+      --glass: rgba(255, 255, 255, 0.04);
+      --glass2: rgba(0, 212, 170, 0.06);
+      --border: rgba(255, 255, 255, 0.06);
+      --border-t: rgba(0, 212, 170, 0.2);
+      --text: #e8f4f0;
+      --muted: #6b8fa0;
+      --muted2: #2a4055;
+      --white: #f0faf7;
+      --amber: #ffb347;
+      --red: #ff4d6d;
+      --purple: #a78bfa;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    html,
+    body {
+      height: 100%;
+      overflow: hidden
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* ── BG ── */
+    .bg-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden
+    }
+
+    .bg-grad {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 20% 0%, #0a2a4080 0%, transparent 55%), radial-gradient(ellipse 60% 50% at 80% 100%, #00d4aa18 0%, transparent 50%), radial-gradient(ellipse 40% 40% at 50% 50%, #00204030 0%, transparent 60%), linear-gradient(180deg, #030912 0%, #060d1a 50%, #030912 100%);
+    }
+
+    .bg-grid {
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(rgba(0, 212, 170, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 212, 170, 0.04) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+
+    .bg-grid2 {
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(rgba(0, 212, 170, 0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 212, 170, 0.015) 1px, transparent 1px);
+      background-size: 10px 10px;
+    }
+
+    canvas#particles {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%
+    }
+
+    /* ── APP ── */
+    .app {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      grid-template-rows: 62px 1fr;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      grid-column: 1/-1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      background: rgba(6, 13, 26, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-t);
+      position: relative;
+      z-index: 10;
+    }
+
+    .topbar::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--teal), transparent);
+      opacity: .6;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px
+    }
+
+    .logo-wrap {
+      width: 36px;
+      height: 36px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-hex {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--teal), var(--green));
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 900;
+      color: #030912;
+      animation: hex-pulse 4s ease-in-out infinite;
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    @keyframes hex-pulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 var(--teal-glow), 0 0 20px var(--teal-glow)
+      }
+
+      50% {
+        box-shadow: 0 0 0 8px transparent, 0 0 40px var(--teal-glow)
+      }
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      gap: 1px
+    }
+
+    .brand-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      background: linear-gradient(135deg, var(--white), var(--teal), var(--green));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-tag {
+      font-size: 9px;
+      color: var(--muted);
+      letter-spacing: 2.5px;
+      font-family: 'JetBrains Mono', monospace;
+      text-transform: uppercase
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--glass);
+      border: 1px solid var(--border-t);
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 10px;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 1px;
+    }
+
+    .sdot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+      animation: blink 2s ease-in-out infinite
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: .3
+      }
+    }
+
+    .resume-badge {
+      display: none;
+      align-items: center;
+      gap: 7px;
+      background: var(--glass2);
+      border: 1px solid var(--border-t);
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 10px;
+      color: var(--teal);
+      font-family: 'JetBrains Mono', monospace;
+      cursor: pointer;
+      transition: all .2s;
+      letter-spacing: .5px;
+    }
+
+    .resume-badge:hover {
+      background: var(--teal);
+      color: var(--bg)
+    }
+
+    .resume-badge.on {
+      display: flex
+    }
+
+    .rb-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
+      flex-shrink: 0
+    }
+
+    .clear-btn {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 14px;
+      color: var(--muted);
+      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: all .2s;
+    }
+
+    .clear-btn:hover {
+      border-color: var(--teal);
+      color: var(--teal)
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      background: rgba(6, 13, 26, 0.7);
+      backdrop-filter: blur(24px);
+      border-right: 1px solid var(--border-t);
+      padding: 16px 0 0;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar>* {
+      flex-shrink: 0
+    }
+
+    .sidebar::-webkit-scrollbar {
+      width: 3px
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: var(--teal-deep);
+      border-radius: 2px
+    }
+
+    .upload-zone {
+      margin: 0 14px 8px;
+      background: var(--glass2);
+      border: 1.5px dashed var(--teal-line);
+      border-radius: 14px;
+      padding: 20px 14px;
+      text-align: center;
+      cursor: pointer;
+      transition: all .25s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .upload-zone::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--teal-glass), transparent);
+      opacity: 0;
+      transition: opacity .3s;
+    }
+
+    .upload-zone:hover::before,
+    .upload-zone.dv::before {
+      opacity: 1
+    }
+
+    .upload-zone:hover,
+    .upload-zone.dv {
+      border-color: var(--teal);
+      box-shadow: 0 0 20px var(--teal-glow)
+    }
+
+    .upload-zone input[type=file] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+    }
+
+    .uz-ico {
+      font-size: 28px;
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .uz-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 3px;
+      position: relative;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .uz-sub {
+      font-size: 10px;
+      color: var(--muted);
+      line-height: 1.5;
+      position: relative;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .uz-tags {
+      display: flex;
+      gap: 5px;
+      justify-content: center;
+      margin-top: 10px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .utag {
+      font-size: 9px;
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(0, 212, 170, 0.12);
+      border: 1px solid var(--teal-line);
+      color: var(--teal);
+      border-radius: 4px;
+      padding: 2px 8px;
+      letter-spacing: .5px
+    }
+
+    .uf-card {
+      display: none;
+      margin: 0 14px 8px;
+      background: var(--glass2);
+      border: 1px solid var(--border-t);
+      border-radius: 14px;
+      padding: 14px;
+      animation: fadeUp .3s ease;
+    }
+
+    .uf-card.on {
+      display: block
+    }
+
+    .uf-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 3px
+    }
+
+    .uf-name {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--white);
+      font-family: 'JetBrains Mono', monospace;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 175px
+    }
+
+    .uf-rm {
+      font-size: 10px;
+      color: var(--teal);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      flex-shrink: 0;
+      padding: 0
+    }
+
+    .uf-rm:hover {
+      color: var(--green)
+    }
+
+    .uf-meta {
+      font-size: 10px;
+      color: var(--muted);
+      margin-bottom: 11px
+    }
+
+    .uf-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 5px
+    }
+
+    .uf-btn {
+      width: 100%;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--teal-line);
+      background: transparent;
+      color: var(--text);
+      font-size: 11px;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      text-align: left;
+      transition: all .15s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+    }
+
+    .uf-btn:hover {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: var(--bg);
+      font-weight: 600
+    }
+
+    .sb-sec {
+      padding: 12px 18px 5px;
+      font-size: 9px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--muted2);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-top: 4px;
+      position: relative;
+    }
+
+    .sb-sec::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 18px;
+      right: 18px;
+      height: 1px;
+      background: var(--border)
+    }
+
+    .chip {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 9px 18px;
+      cursor: pointer;
+      border-left: 2px solid transparent;
+      transition: all .15s;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .chip:hover {
+      background: var(--glass2);
+      border-left-color: var(--teal);
+      color: var(--text)
+    }
+
+    .ci {
+      font-size: 13px;
+      flex-shrink: 0;
+      margin-top: 1px
+    }
+
+    .axiom-card {
+      margin: 14px;
+      background: var(--glass2);
+      border: 1px solid var(--border-t);
+      border-radius: 14px;
+      padding: 14px;
+      margin-top: auto;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .axiom-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--teal), transparent);
+    }
+
+    .ax-logo {
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, var(--teal), var(--green));
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 900;
+      color: var(--bg);
+      font-family: 'Orbitron', sans-serif;
+      margin-bottom: 10px;
+      box-shadow: 0 0 16px var(--teal-glow);
+    }
+
+    .ax-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--teal), var(--green));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 2px;
+    }
+
+    .ax-sub {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 4px;
+      line-height: 1.5
+    }
+
+    /* ── CHAT ── */
+    .chat-area {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden
+    }
+
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      scroll-behavior: smooth;
+    }
+
+    .messages::-webkit-scrollbar {
+      width: 4px
+    }
+
+    .messages::-webkit-scrollbar-thumb {
+      background: var(--border-t);
+      border-radius: 2px
+    }
+
+    /* ── WELCOME ── */
+    .welcome {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      text-align: center;
+      animation: fadeUp .7s ease both;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(24px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .w-logo-wrap {
+      position: relative;
+      margin-bottom: 28px
+    }
+
+    .w-hex {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, var(--teal), var(--green));
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--bg);
+      font-family: 'Orbitron', sans-serif;
+      box-shadow: 0 0 60px var(--teal-glow), 0 0 120px rgba(0, 212, 170, 0.1);
+      animation: float 5s ease-in-out infinite;
+      position: relative;
+      z-index: 1;
+    }
+
+    .w-ring {
+      position: absolute;
+      inset: -14px;
+      border: 1px solid var(--teal-line);
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      animation: ring-spin 8s linear infinite;
+      opacity: .5;
+    }
+
+    .w-ring2 {
+      position: absolute;
+      inset: -28px;
+      border: 1px solid rgba(0, 212, 170, 0.1);
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      animation: ring-spin 12s linear infinite reverse;
+      opacity: .3;
+    }
+
+    @keyframes ring-spin {
+      from {
+        transform: rotate(0)
+      }
+
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0)
+      }
+
+      50% {
+        transform: translateY(-10px)
+      }
+    }
+
+    .w-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, var(--white) 0%, var(--teal) 50%, var(--green) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 4px;
+    }
+
+    .w-sub {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 36px;
+    }
+
+    .w-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      max-width: 540px;
+      width: 100%
+    }
+
+    .w-card {
+      background: var(--glass);
+      border: 1px solid var(--border-t);
+      border-radius: 14px;
+      padding: 16px 18px;
+      text-align: left;
+      cursor: pointer;
+      transition: all .25s;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    .w-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--teal-glass), transparent);
+      opacity: 0;
+      transition: opacity .3s;
+    }
+
+    .w-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1.5px;
+      background: linear-gradient(90deg, transparent, var(--teal), transparent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .4s;
+    }
+
+    .w-card:hover::before {
+      opacity: 1
+    }
+
+    .w-card:hover::after {
+      transform: scaleX(1)
+    }
+
+    .w-card:hover {
+      border-color: var(--teal);
+      box-shadow: 0 8px 32px rgba(0, 212, 170, 0.12);
+      transform: translateY(-2px)
+    }
+
+    .w-icon {
+      font-size: 22px;
+      margin-bottom: 9px;
+      position: relative;
+      z-index: 1
+    }
+
+    .w-ttl {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 4px;
+      position: relative;
+      z-index: 1
+    }
+
+    .w-desc {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.5;
+      position: relative;
+      z-index: 1
+    }
+
+    /* ── MESSAGES ── */
+    .msg {
+      display: flex;
+      gap: 12px;
+      max-width: 860px;
+      animation: msgIn .3s ease both
+    }
+
+    @keyframes msgIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .msg.user {
+      flex-direction: row-reverse;
+      align-self: flex-end
+    }
+
+    .msg-av {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    .msg.bot .msg-av {
+      background: linear-gradient(135deg, var(--teal), var(--green));
+      box-shadow: 0 0 16px var(--teal-glow);
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 13px;
+      color: var(--bg);
+    }
+
+    .msg.user .msg-av {
+      background: var(--glass);
+      border: 1px solid var(--border-t);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--teal);
+      font-family: 'Orbitron', sans-serif;
+      letter-spacing: 1px;
+      backdrop-filter: blur(10px);
+    }
+
+    .msg-body {
+      display: flex;
+      flex-direction: column;
+      gap: 5px
+    }
+
+    .msg-nm {
+      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 1.5px;
+      text-transform: uppercase
+    }
+
+    .msg.bot .msg-nm {
+      color: var(--teal)
+    }
+
+    .msg.user .msg-nm {
+      color: var(--muted);
+      text-align: right
+    }
+
+    .bubble {
+      padding: 15px 20px;
+      border-radius: 14px;
+      font-size: 14px;
+      line-height: 1.75;
+      max-width: 660px;
+    }
+
+    .msg.bot .bubble {
+      background: rgba(10, 22, 40, 0.8);
+      border: 1px solid var(--border-t);
+      border-top-left-radius: 3px;
+      color: var(--text);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .msg.user .bubble {
+      background: linear-gradient(135deg, var(--teal), var(--teal-dim));
+      color: var(--bg);
+      border-top-right-radius: 3px;
+      font-weight: 500;
+      box-shadow: 0 4px 20px var(--teal-glow);
+    }
+
+    .bubble strong {
+      color: var(--teal);
+      font-weight: 700
+    }
+
+    .msg.user .bubble strong {
+      color: var(--bg)
+    }
+
+    .bubble .tag {
+      display: inline-block;
+      background: rgba(0, 212, 170, 0.12);
+      border: 1px solid var(--teal-line);
+      color: var(--teal);
+      border-radius: 5px;
+      padding: 1px 8px;
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      margin: 1px 2px;
+    }
+
+    .up-bubble {
+      background: rgba(10, 22, 40, 0.8);
+      border: 1px solid var(--border-t);
+      border-radius: 14px;
+      border-top-left-radius: 3px;
+      padding: 15px 20px;
+      max-width: 420px;
+      backdrop-filter: blur(20px);
+    }
+
+    .up-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 11px
+    }
+
+    .up-ico {
+      width: 38px;
+      height: 38px;
+      background: var(--glass2);
+      border: 1px solid var(--border-t);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .up-fname {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--white)
+    }
+
+    .up-meta {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px
+    }
+
+    .up-bar {
+      height: 2px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden
+    }
+
+    .up-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--teal), var(--green));
+      border-radius: 2px;
+      animation: pfill 1.5s ease forwards
+    }
+
+    @keyframes pfill {
+      from {
+        width: 0
+      }
+
+      to {
+        width: 100%
+      }
+    }
+
+    .typing {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      padding: 15px 20px;
+      background: rgba(10, 22, 40, 0.8);
+      border: 1px solid var(--border-t);
+      border-radius: 14px;
+      border-top-left-radius: 3px;
+      width: fit-content;
+      backdrop-filter: blur(20px);
+    }
+
+    .typing span {
+      width: 7px;
+      height: 7px;
+      background: var(--teal);
+      border-radius: 50%;
+      animation: bounce 1.2s ease-in-out infinite;
+    }
+
+    .typing span:nth-child(2) {
+      animation-delay: .2s
+    }
+
+    .typing span:nth-child(3) {
+      animation-delay: .4s
+    }
+
+    @keyframes bounce {
+
+      0%,
+      80%,
+      100% {
+        transform: translateY(0);
+        opacity: .3
+      }
+
+      40% {
+        transform: translateY(-7px);
+        opacity: 1
+      }
+    }
+
+    /* ── INPUT ── */
+    .input-area {
+      padding: 14px 36px 20px;
+      border-top: 1px solid var(--border-t);
+      background: rgba(6, 13, 26, 0.85);
+      backdrop-filter: blur(24px);
+      position: relative;
+    }
+
+    .input-area::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--teal), transparent);
+      opacity: .4;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end
+    }
+
+    .input-wrap {
+      flex: 1;
+      position: relative;
+      background: rgba(10, 22, 40, 0.9);
+      border: 1px solid var(--border-t);
+      border-radius: 14px;
+      transition: all .2s;
+      backdrop-filter: blur(20px);
+    }
+
+    .input-wrap:focus-within {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px var(--teal-glass), 0 0 20px var(--teal-glow);
+    }
+
+    .input-wrap textarea {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      padding: 13px 50px 13px 18px;
+      resize: none;
+      min-height: 48px;
+      max-height: 130px;
+      overflow-y: auto;
+    }
+
+    .input-wrap textarea::placeholder {
+      color: var(--muted2)
+    }
+
+    .attach-btn {
+      position: absolute;
+      right: 14px;
+      bottom: 12px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: var(--muted2);
+      font-size: 18px;
+      padding: 0;
+      line-height: 1;
+      transition: color .2s;
+      z-index: 2;
+    }
+
+    .attach-btn:hover {
+      color: var(--teal)
+    }
+
+    .attach-btn input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%
+    }
+
+    .send-btn {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--teal), var(--teal-dim));
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      transition: all .2s;
+      flex-shrink: 0;
+      box-shadow: 0 4px 20px var(--teal-glow);
+    }
+
+    .send-btn:hover {
+      background: linear-gradient(135deg, var(--green), var(--teal));
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px var(--teal-glow)
+    }
+
+    .send-btn:active {
+      transform: translateY(0)
+    }
+
+    .send-btn:disabled {
+      opacity: .35;
+      cursor: not-allowed;
+      transform: none
+    }
+
+    .input-hint {
+      font-size: 10px;
+      color: var(--muted2);
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 1px;
+      margin-top: 8px;
+      text-align: center
+    }
+
+    /* ── SCAN OVERLAY ── */
+    .scan-ov {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 9, 18, 0.85);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .3s;
+    }
+
+    .scan-ov.on {
+      opacity: 1;
+      pointer-events: all
+    }
+
+    .scan-box {
+      width: 300px;
+      background: rgba(10, 22, 40, 0.95);
+      border: 1px solid var(--border-t);
+      border-radius: 18px;
+      padding: 36px 28px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 20px 80px rgba(0, 212, 170, 0.15);
+    }
+
+    .scan-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1.5px;
+      background: linear-gradient(90deg, transparent, var(--teal), var(--green), transparent);
+      animation: shimmer 2s linear infinite;
+    }
+
+    @keyframes shimmer {
+      0% {
+        transform: translateX(-100%)
+      }
+
+      100% {
+        transform: translateX(100%)
+      }
+    }
+
+    .scan-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 1.5px;
+      background: var(--teal);
+      box-shadow: 0 0 20px var(--teal);
+      top: 0;
+      animation: scanmove 1.8s ease-in-out infinite;
+      opacity: .6;
+    }
+
+    @keyframes scanmove {
+      0% {
+        top: 0
+      }
+
+      100% {
+        top: 100%
+      }
+    }
+
+    .scan-spinner {
+      font-size: 40px;
+      margin-bottom: 16px;
+      display: inline-block;
+      animation: spin 2.5s linear infinite
+    }
+
+    @keyframes spin {
+      from {
+        transform: rotate(0)
+      }
+
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    .scan-ttl {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--teal), var(--green));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 4px;
+      margin-bottom: 6px;
+    }
+
+    .scan-st {
+      font-size: 11px;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 20px
+    }
+
+    .scan-bar {
+      height: 2px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden
+    }
+
+    .scan-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--teal), var(--green));
+      border-radius: 2px;
+      width: 0;
+      transition: width .3s;
+      box-shadow: 0 0 10px var(--teal)
+    }
+
+    .verdict-box {
+      margin-top: 14px;
+      padding: 11px 16px;
+      background: var(--glass2);
+      border-left: 2.5px solid var(--teal);
+      border-radius: 0 8px 8px 0;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--teal);
+    }
+
+    /* ── RADAR CHART WIDGET ── */
+    .radar-widget {
+      background: rgba(10, 22, 40, 0.9);
+      border: 1px solid var(--border-t);
+      border-radius: 16px;
+      padding: 20px;
+      max-width: 480px;
+      backdrop-filter: blur(20px);
+      margin-top: 8px;
+    }
+
+    .radar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .radar-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--teal);
+    }
+
+    .radar-score {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 26px;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--teal), var(--green));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .radar-score span {
+      font-size: 13px;
+      color: var(--muted);
+      -webkit-text-fill-color: var(--muted);
+    }
+
+    canvas.radar-canvas {
+      display: block;
+      margin: 0 auto 16px;
+    }
+
+    .radar-legend {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px 12px;
+    }
+
+    .rl-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .rl-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .rl-val {
+      margin-left: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--white);
+    }
+
+    /* ── COVER LETTER MODAL ── */
+    .modal-ov {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 9, 18, 0.9);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 998;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .3s;
+    }
+
+    .modal-ov.on {
+      opacity: 1;
+      pointer-events: all
+    }
+
+    .modal-box {
+      width: min(580px, 94vw);
+      background: rgba(10, 22, 40, 0.98);
+      border: 1px solid var(--border-t);
+      border-radius: 20px;
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 30px 100px rgba(0, 212, 170, 0.1);
+    }
+
+    .modal-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1.5px;
+      background: linear-gradient(90deg, transparent, var(--teal), var(--green), transparent);
+    }
+
+    .modal-ttl {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--teal);
+      letter-spacing: 3px;
+      margin-bottom: 6px;
+    }
+
+    .modal-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 20px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 14px;
+      transition: all .2s;
+    }
+
+    .modal-close:hover {
+      border-color: var(--teal);
+      color: var(--teal)
+    }
+
+    .modal-field {
+      margin-bottom: 14px;
+    }
+
+    .modal-label {
+      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 1.5px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+
+    .modal-input {
+      width: 100%;
+      background: rgba(6, 13, 26, 0.8);
+      border: 1px solid var(--border-t);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      padding: 10px 14px;
+      outline: none;
+      transition: all .2s;
+    }
+
+    .modal-input:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 2px var(--teal-glass);
+    }
+
+    .modal-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .modal-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, var(--teal), var(--teal-dim));
+      border: none;
+      border-radius: 10px;
+      color: var(--bg);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: all .2s;
+      margin-top: 4px;
+    }
+
+    .modal-btn:hover {
+      background: linear-gradient(135deg, var(--green), var(--teal));
+      box-shadow: 0 6px 24px var(--teal-glow);
+    }
+
+    .modal-btn:disabled {
+      opacity: .4;
+      cursor: not-allowed
+    }
+
+    /* ── SKILL TIMELINE ── */
+    .timeline-widget {
+      background: rgba(10, 22, 40, 0.9);
+      border: 1px solid var(--border-t);
+      border-radius: 16px;
+      padding: 20px;
+      max-width: 600px;
+      backdrop-filter: blur(20px);
+      margin-top: 8px;
+    }
+
+    .tl-header {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--teal);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tl-track {
+      position: relative;
+      padding-left: 28px;
+    }
+
+    .tl-line {
+      position: absolute;
+      left: 10px;
+      top: 0;
+      bottom: 0;
+      width: 1.5px;
+      background: linear-gradient(180deg, var(--teal), var(--teal-line), transparent);
+    }
+
+    .tl-node {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .tl-dot {
+      position: absolute;
+      left: -23px;
+      top: 3px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 2px solid var(--teal);
+      background: var(--bg);
+      box-shadow: 0 0 10px var(--teal-glow);
+    }
+
+    .tl-dot.now {
+      background: var(--teal);
+      box-shadow: 0 0 14px var(--teal);
+    }
+
+    .tl-dot.future {
+      border-color: var(--muted2);
+      box-shadow: none;
+    }
+
+    .tl-time {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: var(--muted);
+      letter-spacing: 1.5px;
+      margin-bottom: 3px;
+    }
+
+    .tl-skill {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 2px;
+    }
+
+    .tl-desc {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .tl-tag {
+      display: inline-block;
+      font-size: 9px;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin-top: 5px;
+    }
+
+    .tl-tag.current {
+      background: rgba(0, 212, 170, 0.15);
+      border: 1px solid var(--teal-line);
+      color: var(--teal);
+    }
+
+    .tl-tag.next {
+      background: rgba(167, 139, 250, 0.12);
+      border: 1px solid rgba(167, 139, 250, 0.3);
+      color: var(--purple);
+    }
+
+    .tl-tag.future {
+      background: rgba(0, 255, 136, 0.08);
+      border: 1px solid rgba(0, 255, 136, 0.2);
+      color: var(--green);
+    }
+
+    /* ── KEYWORD HIGHLIGHTER ── */
+    .kw-modal {
+      width: min(620px, 96vw);
+      max-height: 82vh;
+      overflow-y: auto;
+    }
+
+    .kw-output {
+      background: rgba(6, 13, 26, 0.9);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      font-size: 13px;
+      line-height: 1.9;
+      color: var(--muted);
+      max-height: 260px;
+      overflow-y: auto;
+      margin-top: 14px;
+      white-space: pre-wrap;
+    }
+
+    .kw-output .kw-hit {
+      background: rgba(0, 212, 170, 0.2);
+      border-bottom: 1.5px solid var(--teal);
+      color: var(--teal);
+      border-radius: 3px;
+      padding: 0 2px;
+      cursor: help;
+      font-weight: 600;
+    }
+
+    .kw-output .kw-miss {
+      background: rgba(255, 77, 109, 0.12);
+      border-bottom: 1.5px solid var(--red);
+      color: #ff8099;
+      border-radius: 3px;
+      padding: 0 2px;
+      cursor: help;
+    }
+
+    .kw-stats {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .kw-stat {
+      flex: 1;
+      min-width: 100px;
+      background: var(--glass2);
+      border: 1px solid var(--border-t);
+      border-radius: 10px;
+      padding: 10px 14px;
+      text-align: center;
+    }
+
+    .kw-sn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .kw-sl {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 2px;
+      letter-spacing: .5px;
+    }
+
+    .kw-present .kw-sn {
+      color: var(--teal)
+    }
+
+    .kw-missing .kw-sn {
+      color: var(--red)
+    }
+
+    .kw-score .kw-sn {
+      background: linear-gradient(135deg, var(--teal), var(--green));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* ── EXPORT BTN ── */
+    .export-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--glass2);
+      border: 1px solid var(--border-t);
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 10px;
+      color: var(--teal);
+      font-family: 'JetBrains Mono', monospace;
+      cursor: pointer;
+      transition: all .2s;
+      margin-top: 8px;
+      letter-spacing: .5px;
+    }
+
+    .export-btn:hover {
+      background: var(--teal);
+      color: var(--bg)
+    }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      background: rgba(10, 22, 40, 0.98);
+      border: 1px solid var(--border-t);
+      border-radius: 12px;
+      padding: 12px 20px;
+      font-size: 12px;
+      color: var(--teal);
+      font-family: 'JetBrains Mono', monospace;
+      z-index: 9999;
+      transform: translateY(20px);
+      opacity: 0;
+      transition: all .3s;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar {
+      width: 4px
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-t);
+      border-radius: 2px
+    }
+
+    @media(max-width:700px) {
+      .app {
+        grid-template-columns: 1fr
+      }
+
+      .sidebar {
+        display: none
+      }
+
+      .messages {
+        padding: 16px
+      }
+
+      .input-area {
+        padding: 10px 14px 16px
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="bg-layer">
+    <div class="bg-grad"></div>
+    <div class="bg-grid"></div>
+    <div class="bg-grid2"></div>
+    <canvas id="particles"></canvas>
+  </div>
+
+  <!-- SCAN OVERLAY -->
+  <div class="scan-ov" id="scanOv">
+    <div class="scan-box">
+      <div class="scan-line"></div>
+      <div class="scan-spinner">📄</div>
+      <div class="scan-ttl">SCANNING</div>
+      <div class="scan-st" id="scanSt">READING DOCUMENT...</div>
+      <div class="scan-bar">
+        <div class="scan-fill" id="scanFill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COVER LETTER MODAL -->
+  <div class="modal-ov" id="clModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal('clModal')">✕</button>
+      <div class="modal-ttl">COVER LETTER</div>
+      <div class="modal-sub">AI-GENERATED · TAILORED TO YOUR RESUME</div>
+      <div class="modal-row">
+        <div class="modal-field">
+          <div class="modal-label">Job Title</div>
+          <input class="modal-input" id="cl-title" placeholder="e.g. Senior Backend Engineer">
+        </div>
+        <div class="modal-field">
+          <div class="modal-label">Company Name</div>
+          <input class="modal-input" id="cl-company" placeholder="e.g. Stripe">
+        </div>
+      </div>
+      <div class="modal-field">
+        <div class="modal-label">Hiring Manager (optional)</div>
+        <input class="modal-input" id="cl-mgr" placeholder="e.g. Jane Smith">
+      </div>
+      <div class="modal-field">
+        <div class="modal-label">Key Requirement to Emphasize</div>
+        <input class="modal-input" id="cl-req" placeholder="e.g. distributed systems, leadership, ML pipelines">
+      </div>
+      <button class="modal-btn" id="clGenBtn" onclick="generateCoverLetter()">⚡ GENERATE COVER LETTER</button>
+    </div>
+  </div>
+
+  <!-- KEYWORD HIGHLIGHTER MODAL -->
+  <div class="modal-ov" id="kwModal">
+    <div class="modal-box kw-modal">
+      <button class="modal-close" onclick="closeModal('kwModal')">✕</button>
+      <div class="modal-ttl">JOB KEYWORD SCANNER</div>
+      <div class="modal-sub">PASTE A JOB DESCRIPTION — SEE WHAT'S MISSING FROM YOUR RESUME</div>
+      <div class="modal-field">
+        <div class="modal-label">Paste Job Description</div>
+        <textarea class="modal-input" id="jd-input" rows="5" placeholder="Paste the full job description here..."
+          style="resize:vertical;line-height:1.6;"></textarea>
+      </div>
+      <button class="modal-btn" id="kwScanBtn" onclick="runKeywordScan()">🔍 SCAN KEYWORDS</button>
+      <div id="kwResults" style="display:none">
+        <div class="kw-stats" id="kwStats"></div>
+        <div
+          style="font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:14px;margin-bottom:6px;">
+          RESUME TEXT — <span style="color:var(--teal)">■ PRESENT</span> &nbsp; <span style="color:var(--red)">■
+            MISSING</span></div>
+        <div class="kw-output" id="kwOutput"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="app">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo-wrap">
+          <div class="logo-hex">A</div>
+        </div>
+        <div class="brand-text">
+          <div class="brand-name">AXIOM</div>
+          <div class="brand-tag">AI Career Intelligence</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="resume-badge" id="rBadge" onclick="reanalyze()">
+          <div class="rb-dot"></div><span id="rBadgeName">resume.pdf</span>
+        </div>
+        <div class="status-pill">
+          <div class="sdot"></div>AXIOM ONLINE
+        </div>
+        <button class="clear-btn" onclick="clearChat()">[ CLEAR ]</button>
+      </div>
+    </header>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="upload-zone" id="upZone" ondragover="onDragOver(event)" ondragleave="onDragLeave()"
+        ondrop="onDrop(event)">
+        <input type="file" id="fileInput" accept=".pdf,.txt,.docx,.doc" onchange="onFileSel(event)">
+        <div class="uz-ico">📁</div>
+        <div class="uz-title">Upload Your Resume</div>
+        <div class="uz-sub">Drag & drop or click to browse<br>for instant AI analysis</div>
+        <div class="uz-tags"><span class="utag">PDF</span><span class="utag">DOCX</span><span class="utag">TXT</span>
+        </div>
+      </div>
+
+      <div class="uf-card" id="ufCard">
+        <div class="uf-top">
+          <div class="uf-name" id="ufName">—</div>
+          <button class="uf-rm" onclick="removeResume()">✕ Remove</button>
+        </div>
+        <div class="uf-meta" id="ufMeta">Loading...</div>
+        <div class="uf-btns">
+          <button class="uf-btn" onclick="runAnalysis('full')">📊 Full Deep Analysis</button>
+          <button class="uf-btn" onclick="runAnalysis('score')">🎯 Score My Resume /100</button>
+          <button class="uf-btn" onclick="showRadarModal()">📈 Radar Score Chart</button>
+          <button class="uf-btn" onclick="runAnalysis('jobs')">💼 Find Matching Jobs</button>
+          <button class="uf-btn" onclick="runAnalysis('gaps')">⚡ Detect Skill Gaps</button>
+          <button class="uf-btn" onclick="runAnalysis('ats')">🤖 ATS Audit</button>
+          <button class="uf-btn" onclick="runAnalysis('improve')">🔥 Improvement Plan</button>
+          <button class="uf-btn" onclick="showCareerTimeline()">🗺️ Career Trajectory</button>
+          <button class="uf-btn" onclick="openModal('clModal')">✉️ Generate Cover Letter</button>
+          <button class="uf-btn" onclick="openModal('kwModal')">🔍 Job Keyword Scanner</button>
+        </div>
+      </div>
+
+      <div class="sb-sec">Quick Actions</div>
+      <div class="chip" onclick="sp('What are the top in-demand tech skills in 2025 I should add to my resume?')"><span
+          class="ci">⚡</span><span>Top skills in 2025</span></div>
+      <div class="chip"
+        onclick="sp('Write a powerful professional summary for a Python developer with 3 years experience')"><span
+          class="ci">✍️</span><span>Write professional summary</span></div>
+      <div class="chip" onclick="sp('How do I make my resume ATS-friendly?')"><span class="ci">🤖</span><span>ATS
+          optimization tips</span></div>
+      <div class="chip"
+        onclick="sp('Give me 5 strong bullet points for a software engineer who built microservices at scale')"><span
+          class="ci">📝</span><span>Generate bullet points</span></div>
+      <div class="chip" onclick="openModal('kwModal')"><span class="ci">🔍</span><span>Job keyword scanner</span></div>
+      <div class="chip" onclick="exportChatPDF()"><span class="ci">📥</span><span>Export analysis as PDF</span></div>
+
+      <div class="sb-sec">Interview & Career</div>
+      <div class="chip"
+        onclick="sp('Give me top 5 interview questions for a data scientist role with strong model answers')"><span
+          class="ci">🎤</span><span>Interview questions</span></div>
+      <div class="chip" onclick="sp('How do I negotiate a higher salary offer effectively?')"><span
+          class="ci">💰</span><span>Salary negotiation</span></div>
+      <div class="chip" onclick="sp('Create a 6-month roadmap to become a Machine Learning Engineer from scratch')">
+        <span class="ci">🗺️</span><span>Career roadmap</span>
+      </div>
+      <div class="chip" onclick="sp('How do I transition from software engineering to product management?')"><span
+          class="ci">🔄</span><span>Career transition</span></div>
+      <div class="chip" onclick="sp('What should I include in my LinkedIn profile to get noticed by recruiters?')"><span
+          class="ci">🔗</span><span>LinkedIn optimization</span></div>
+
+      <div class="axiom-card">
+        <div class="ax-logo">Q</div>
+        <div class="ax-title">AXIOM</div>
+        <div class="ax-sub">Quantum Draft's career intelligence engine. Upload your resume for a full AI-powered deep
+          analysis — skills, gaps, score, radar chart, cover letter, and job keyword scanner.</div>
+      </div>
+    </aside>
+
+    <!-- CHAT -->
+    <main class="chat-area">
+      <div class="messages" id="msgs">
+        <div class="welcome" id="welcome">
+          <div class="w-logo-wrap">
+            <div class="w-ring2"></div>
+            <div class="w-ring"></div>
+            <div class="w-hex">Q</div>
+          </div>
+          <div class="w-title">MEET AXIOM</div>
+          <p class="w-sub">Quantum Draft · AI Career Intelligence Engine</p>
+          <div class="w-grid">
+            <div class="w-card" onclick="document.getElementById('fileInput').click()">
+              <div class="w-icon">📁</div>
+              <div class="w-ttl">Upload Resume</div>
+              <div class="w-desc">Drop PDF or DOCX for instant full AI analysis</div>
+            </div>
+            <div class="w-card" onclick="sp('What jobs match a Python + ML + cloud engineer with 4 years experience?')">
+              <div class="w-icon">🎯</div>
+              <div class="w-ttl">Job Matching</div>
+              <div class="w-desc">Find roles that fit your exact skill profile</div>
+            </div>
+            <div class="w-card"
+              onclick="sp('Write a professional summary for a full-stack developer with 4 years of React and Node.js')">
+              <div class="w-icon">✍️</div>
+              <div class="w-ttl">Resume Writing</div>
+              <div class="w-desc">AI-crafted content that gets interviews</div>
+            </div>
+            <div class="w-card"
+              onclick="sp('Prepare me for a senior software engineer interview at a top tech company')">
+              <div class="w-icon">🎤</div>
+              <div class="w-ttl">Interview Prep</div>
+              <div class="w-desc">Questions, answers & negotiation tactics</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="input-area">
+        <div class="input-row">
+          <div class="input-wrap">
+            <textarea id="msgIn" placeholder="Ask AXIOM anything — or upload your resume for instant analysis..."
+              rows="1" onkeydown="onKey(event)" oninput="autoH(this)"></textarea>
+            <button class="attach-btn" title="Attach resume">📎
+              <input type="file" accept=".pdf,.txt,.docx,.doc" onchange="onFileSel(event)">
+            </button>
+          </div>
+          <button class="send-btn" id="sendBtn" onclick="sendMsg()">➤</button>
+        </div>
+        <div class="input-hint">ENTER to send &nbsp;·&nbsp; 📎 attach resume &nbsp;·&nbsp; quantumdraft.in</div>
+      </div>
+    </main>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"><span id="toastIcon">✓</span><span id="toastMsg">Done</span></div>
+
+  <script>
+    /* ── PARTICLES ── */
+    (function () {
+      const canvas = document.getElementById('particles'), ctx = canvas.getContext('2d');
+      let W, H, pts = [];
+      function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; init() }
+      function init() { pts = []; const n = Math.floor((W * H) / 18000); for (let i = 0; i < n; i++)pts.push({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - .5) * .25, vy: (Math.random() - .5) * .25, r: Math.random() * 1.5 + .5, a: Math.random() * .5 + .1 }); }
+      function draw() { ctx.clearRect(0, 0, W, H); pts.forEach(p => { p.x += p.vx; p.y += p.vy; if (p.x < 0 || p.x > W) p.vx *= -1; if (p.y < 0 || p.y > H) p.vy *= -1; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fillStyle = `rgba(0,212,170,${p.a})`; ctx.fill(); }); for (let i = 0; i < pts.length; i++)for (let j = i + 1; j < pts.length; j++) { const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y, d = Math.sqrt(dx * dx + dy * dy); if (d < 100) { ctx.beginPath(); ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[j].x, pts[j].y); ctx.strokeStyle = `rgba(0,212,170,${.08 * (1 - d / 100)})`; ctx.lineWidth = .5; ctx.stroke(); } } requestAnimationFrame(draw); }
+      window.addEventListener('resize', resize); resize(); draw();
+    })();
+
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    const SYS = `You are AXIOM — the elite career intelligence engine built exclusively for Quantum Draft (quantumdraft.in), an AI-powered digital innovation and career acceleration platform.
+
+IDENTITY:
+- Name: AXIOM | Platform: Quantum Draft (quantumdraft.in)
+- Personality: Professional, sharp, authoritative. Zero fluff. Think world-class career strategist.
+- Tone: Confident, precise, data-driven. Like a top recruiter who respects your time.
+
+EXPERTISE: Resume analysis & 100-point scoring, skill gap detection, job matching (TF-IDF logic), ATS optimization, interview prep (behavioral + technical + STAR), salary negotiation, LinkedIn optimization, career transitions, cover letters, personal branding.
+
+WHEN RESUME IS PROVIDED — Full Structured Analysis:
+1. **CANDIDATE PROFILE** — Name, contact, predicted category, experience level
+2. **RESUME SCORE /100** — Skill Coverage /30, Experience Depth /20, Projects /15, Impact Metrics /15, ATS Compatibility /10, Action Verbs /10 — score + explain each
+3. **SKILLS DETECTED** — All technical & soft skills found
+4. **TOP JOB MATCHES** — 4-5 roles with match % and reasoning
+5. **SKILL GAPS** — Top 5 missing skills with fastest learning paths
+6. **ATS ANALYSIS** — Keyword density, format issues, missing keywords, pass/fail
+7. **IMPROVEMENT PLAN** — Top 5 changes ranked by impact on interview callbacks
+8. **AXIOM VERDICT** — One sharp closing insight
+
+FORMATTING:
+- **bold** for key terms and scores
+- Bullet lists for multi-point answers
+- End complex answers with "— AXIOM VERDICT: [sharp one-liner]"
+- No filler, no disclaimers — pure signal
+
+RULES:
+- Always stay in character as AXIOM by Quantum Draft
+- If asked who built you: "I'm AXIOM, built by the Quantum Draft team at quantumdraft.in"
+- Never mention Claude, GPT, or any other AI platform
+- Off-topic queries: "That's outside my domain. I operate in career intelligence — ask me something that moves your career forward."`;
+
+    let msgs = [], busy = false, resumeText = '', resumeFile = '';
+
+    /* ── FILE HANDLING ── */
+    function onDragOver(e) { e.preventDefault(); document.getElementById('upZone').classList.add('dv') }
+    function onDragLeave() { document.getElementById('upZone').classList.remove('dv') }
+    function onDrop(e) { e.preventDefault(); document.getElementById('upZone').classList.remove('dv'); const f = e.dataTransfer.files[0]; if (f) processFile(f) }
+    function onFileSel(e) { const f = e.target.files[0]; if (f) processFile(f); e.target.value = '' }
+
+    async function processFile(file) {
+      if (!file) return;
+      const ext = file.name.split('.').pop().toLowerCase();
+      if (!['pdf', 'txt', 'doc', 'docx'].includes(ext)) { alert('Please upload a PDF, DOCX, or TXT file.'); return }
+      resumeFile = file.name; showScan('READING DOCUMENT...', 15);
+
+      // Ensure PDF.js is loaded
+      if (ext === 'pdf' && typeof pdfjsLib === 'undefined') {
+        alert('PDF parser is still loading, please wait a second and try again.');
+        hideScan();
+        return;
+      }
+
+      try {
+        let text = '';
+        if (ext === 'pdf') text = await parsePDF(file);
+        else if (ext === 'txt') text = await readTxt(file);
+        else text = await parseDOCX(file);
+        if (!text || text.trim().length < 40) { hideScan(); alert('Could not extract text. Try a .txt version.'); return }
+        if (text.length > 10000) text = text.substring(0, 10000) + "\n\n[RESUME TRUNCATED DUE TO LENGTH]";
+        setScan('PROCESSING...', 72); await wait(400); setScan('ANALYSIS READY', 100); await wait(500);
+        resumeText = text; showFileCard(file, text); hideScan(); addUploadBubble(file.name, text.length);
+        await wait(300); runAnalysis('full');
+      } catch (err) { hideScan(); console.error(err); alert('Error reading file: ' + err.message) }
+    }
+
+    async function parsePDF(file) {
+      const buf = await file.arrayBuffer(); const pdf = await pdfjsLib.getDocument({ data: buf }).promise; let out = '';
+      for (let i = 1; i <= pdf.numPages; i++) { setScan(`SCANNING PAGE ${i}/${pdf.numPages}...`, 15 + (i / pdf.numPages) * 52); const pg = await pdf.getPage(i); const ct = await pg.getTextContent(); out += ct.items.map(x => x.str).join(' ') + '\n'; }
+      return out;
+    }
+    function readTxt(file) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = e => res(e.target.result); r.onerror = rej; r.readAsText(file) }) }
+    async function parseDOCX(file) {
+      return new Promise(res => {
+        const r = new FileReader();
+        r.onload = e => { try { const arr = new Uint8Array(e.target.result); const dec = new TextDecoder('utf-8', 'ignore'); const raw = dec.decode(arr); const m = raw.match(/<w:t[^>]*>([^<]+)<\/w:t>/g) || []; const t = m.map(x => x.replace(/<[^>]+>/g, '')).join(' '); res(t.trim().length > 20 ? t : raw.replace(/[^\x20-\x7E\n]/g, ' ').replace(/\s{3,}/g, ' ').substring(0, 8000)); } catch { res('') } };
+        r.readAsArrayBuffer(file);
+      });
+    }
+    function wait(ms) { return new Promise(r => setTimeout(r, ms)) }
+
+    /* ── SCAN ── */
+    function showScan(s, p) { document.getElementById('scanSt').textContent = s; document.getElementById('scanFill').style.width = p + '%'; document.getElementById('scanOv').classList.add('on') }
+    function setScan(s, p) { document.getElementById('scanSt').textContent = s; document.getElementById('scanFill').style.width = p + '%' }
+    function hideScan() { document.getElementById('scanOv').classList.remove('on') }
+
+    /* ── FILE CARD ── */
+    function showFileCard(file, text) {
+      document.getElementById('upZone').style.display = 'none';
+      document.getElementById('ufCard').classList.add('on');
+      document.getElementById('ufName').textContent = file.name;
+      const kb = Math.round(file.size / 1024), words = text.split(/\s+/).filter(Boolean).length;
+      document.getElementById('ufMeta').textContent = `${file.name.split('.').pop().toUpperCase()} · ${kb}KB · ~${words} words`;
+      const n = file.name.length > 20 ? file.name.substring(0, 17) + '...' : file.name;
+      document.getElementById('rBadgeName').textContent = n; document.getElementById('rBadge').classList.add('on');
+    }
+    function removeResume() { resumeText = ''; resumeFile = ''; document.getElementById('upZone').style.display = ''; document.getElementById('ufCard').classList.remove('on'); document.getElementById('rBadge').classList.remove('on'); }
+    function reanalyze() { if (resumeText) runAnalysis('full') }
+
+    /* ── ANALYSIS ── */
+    function runAnalysis(type) {
+      if (!resumeText) { sp('How do I write a strong resume for a senior software engineering role?'); return }
+      const P = {
+        full: `Perform a COMPLETE DEEP ANALYSIS of my resume. Deliver all 8 sections: Candidate Profile, Resume Score /100 with each sub-score explained, Skills Detected, Top Job Matches with % match, Skill Gaps with learning paths, ATS Analysis, Improvement Plan ranked by impact, and AXIOM Verdict.\n\nRESUME:\n${resumeText}`,
+        score: `Score my resume out of 100. Break down every sub-score: Skill Coverage /30, Experience Depth /20, Projects /15, Impact Metrics /15, ATS Compatibility /10, Action Verbs /10. For each explain what you found and what's missing.\n\nRESUME:\n${resumeText}`,
+        jobs: `Based on my resume, list the top 5 job roles that best match my profile. For each: title, match %, 3 reasons I'm a fit, 2 gaps holding me back.\n\nRESUME:\n${resumeText}`,
+        gaps: `Identify my top skill gaps. For each gap: skill name, why it's critical in 2025, market demand level, and the fastest learning path with specific resources.\n\nRESUME:\n${resumeText}`,
+        ats: `Full ATS audit: keyword density, section headings, formatting red flags, missing power keywords. Give a pass/fail ATS rating with specific fixes for each issue.\n\nRESUME:\n${resumeText}`,
+        improve: `Top 5 resume improvements ranked by impact on getting interview callbacks. For each: what to fix, why it matters, and a concrete before/after rewrite example.\n\nRESUME:\n${resumeText}`,
+      };
+      const L = { full: '📊 Run full deep analysis on my resume', score: '🎯 Score my resume out of 100', jobs: '💼 Find jobs matching my resume', gaps: '⚡ Detect skill gaps in my resume', ats: '🤖 ATS audit my resume', improve: '🔥 Show my improvement plan' };
+      rmWelcome(); addMsg('user', L[type], true); msgs.push({ role: 'user', content: P[type] }); callAPI();
+    }
+
+    /* ── NEW FEATURE 1: RADAR SCORE CHART ── */
+    function showRadarModal() {
+      if (!resumeText) { showToast('⚠️', 'Upload a resume first'); return }
+      // Ask AI to score in JSON, then render radar
+      rmWelcome();
+      const prompt = `Analyze this resume and return ONLY a JSON object (no markdown, no explanation) with these 6 scores (integers 0-100): {"skillCoverage":0,"experienceDepth":0,"projects":0,"impactMetrics":0,"atsCompatibility":0,"actionVerbs":0,"total":0,"verdict":"one sharp sentence"}\n\nRESUME:\n${resumeText}`;
+      addMsg('user', '📈 Generating Radar Score Chart', true);
+      msgs.push({ role: 'user', content: prompt });
+      showTyping();
+      fetch('http://localhost:8001/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ max_tokens: 300, system: SYS, messages: msgs.slice(-4) }) })
+        .then(r => r.json()).then(d => {
+          hideTyping();
+          const raw = d.content?.map(b => b.text || '').join('') || '{}';
+          let scores;
+          try { scores = JSON.parse(raw.replace(/```json|```/g, '').trim()); } catch { scores = { skillCoverage: 60, experienceDepth: 55, projects: 50, impactMetrics: 45, atsCompatibility: 70, actionVerbs: 65, total: 57, verdict: "Unable to parse — try re-uploading." } }
+          msgs.push({ role: 'assistant', content: raw });
+          renderRadarWidget(scores);
+        }).catch(() => { hideTyping(); addMsg('bot', '**Radar chart requires server connection.** Start the local API server to use this feature.', false); });
+    }
+
+    function renderRadarWidget(s) {
+      const labels = ['Skill\nCoverage', 'Experience\nDepth', 'Projects', 'Impact\nMetrics', 'ATS\nCompat.', 'Action\nVerbs'];
+      const vals = [s.skillCoverage, s.experienceDepth, s.projects, s.impactMetrics, s.atsCompatibility, s.actionVerbs];
+      const maxVals = [30, 20, 15, 15, 10, 10];// original weights
+      const normed = vals.map((v, i) => v / 100);
+
+      const c = document.getElementById('msgs');
+      const w = document.createElement('div'); w.className = 'msg bot';
+      const av = document.createElement('div'); av.className = 'msg-av'; av.textContent = 'Q';
+      const body = document.createElement('div'); body.className = 'msg-body';
+      const nm = document.createElement('div'); nm.className = 'msg-nm'; nm.textContent = 'AXIOM · QUANTUM DRAFT';
+
+      const widget = document.createElement('div'); widget.className = 'radar-widget';
+      widget.innerHTML = `
+    <div class="radar-header">
+      <div class="radar-title">RESUME RADAR SCORE</div>
+      <div class="radar-score">${s.total || Math.round(vals.reduce((a, b) => a + b, 0) / 6)}<span>/100</span></div>
+    </div>
+    <canvas class="radar-canvas" id="radarCanvas" width="240" height="220"></canvas>
+    <div class="radar-legend">
+      ${labels.map((l, i) => `<div class="rl-item"><div class="rl-dot" style="background:hsl(${160 + i * 20},80%,${50 + i * 3}%)"></div>${l.replace('\n', ' ')}<span class="rl-val">${vals[i]}/100</span></div>`).join('')}
+    </div>
+    ${s.verdict ? `<div style="margin-top:14px;padding:10px 14px;background:var(--glass2);border-left:2.5px solid var(--teal);border-radius:0 8px 8px 0;font-size:12px;color:var(--teal);font-weight:600;">— AXIOM VERDICT: ${s.verdict}</div>` : ''}
+    <button class="export-btn" onclick="exportRadarPNG()" style="margin-top:12px">📥 Export Chart PNG</button>
+  `;
+
+      body.appendChild(nm); body.appendChild(widget); w.appendChild(av); w.appendChild(body); c.appendChild(w); c.scrollTop = c.scrollHeight;
+
+      // Draw radar
+      requestAnimationFrame(() => {
+        const canvas = document.getElementById('radarCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const cx = 120, cy = 110, R = 90, n = 6;
+        ctx.clearRect(0, 0, 240, 220);
+
+        // Grid rings
+        for (let ring = 1; ring <= 5; ring++) {
+          ctx.beginPath();
+          for (let i = 0; i < n; i++) { const a = (i / n) * Math.PI * 2 - Math.PI / 2; const r = (ring / 5) * R; ctx.lineTo(cx + r * Math.cos(a), cy + r * Math.sin(a)); }
+          ctx.closePath(); ctx.strokeStyle = 'rgba(0,212,170,0.12)'; ctx.lineWidth = 1; ctx.stroke();
+        }
+        // Spokes
+        for (let i = 0; i < n; i++) { const a = (i / n) * Math.PI * 2 - Math.PI / 2; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + R * Math.cos(a), cy + R * Math.sin(a)); ctx.strokeStyle = 'rgba(0,212,170,0.18)'; ctx.lineWidth = 1; ctx.stroke(); }
+
+        // Data polygon - animated
+        let progress = 0;
+        function anim() {
+          progress = Math.min(progress + 0.04, 1);
+          ctx.clearRect(0, 0, 240, 220);
+          // Rings
+          for (let ring = 1; ring <= 5; ring++) { ctx.beginPath(); for (let i = 0; i < n; i++) { const a = (i / n) * Math.PI * 2 - Math.PI / 2; const r = (ring / 5) * R; ctx.lineTo(cx + r * Math.cos(a), cy + r * Math.sin(a)); } ctx.closePath(); ctx.strokeStyle = 'rgba(0,212,170,0.12)'; ctx.lineWidth = 1; ctx.stroke(); }
+          for (let i = 0; i < n; i++) { const a = (i / n) * Math.PI * 2 - Math.PI / 2; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + R * Math.cos(a), cy + R * Math.sin(a)); ctx.strokeStyle = 'rgba(0,212,170,0.18)'; ctx.lineWidth = 1; ctx.stroke(); }
+          // Data
+          ctx.beginPath();
+          for (let i = 0; i < n; i++) { const a = (i / n) * Math.PI * 2 - Math.PI / 2; const r = normed[i] * R * progress; i === 0 ? ctx.moveTo(cx + r * Math.cos(a), cy + r * Math.sin(a)) : ctx.lineTo(cx + r * Math.cos(a), cy + r * Math.sin(a)); }
+          ctx.closePath();
+          ctx.fillStyle = 'rgba(0,212,170,0.15)'; ctx.fill();
+          ctx.strokeStyle = '#00d4aa'; ctx.lineWidth = 2; ctx.stroke();
+          // Dots
+          for (let i = 0; i < n; i++) { const a = (i / n) * Math.PI * 2 - Math.PI / 2; const r = normed[i] * R * progress; ctx.beginPath(); ctx.arc(cx + r * Math.cos(a), cy + r * Math.sin(a), 4, 0, Math.PI * 2); ctx.fillStyle = '#00d4aa'; ctx.fill(); }
+          // Labels
+          ctx.font = '9px JetBrains Mono'; ctx.fillStyle = 'rgba(107,143,160,0.9)'; ctx.textAlign = 'center';
+          for (let i = 0; i < n; i++) { const a = (i / n) * Math.PI * 2 - Math.PI / 2; const lr = R + 20; const lx = cx + lr * Math.cos(a), ly = cy + lr * Math.sin(a); const parts = labels[i].split('\n'); parts.forEach((p, pi) => { ctx.fillText(p, lx, ly + (pi - parts.length / 2 + 0.5) * 12); }); }
+          if (progress < 1) requestAnimationFrame(anim);
+        }
+        anim();
+      });
+    }
+
+    window.exportRadarPNG = function () {
+      const canvas = document.getElementById('radarCanvas');
+      if (!canvas) { showToast('⚠️', 'No chart to export'); return; }
+      const link = document.createElement('a'); link.download = 'axiom-radar-score.png'; link.href = canvas.toDataURL('image/png'); link.click(); showToast('📥', 'Radar chart saved as PNG');
+    };
+
+    /* ── NEW FEATURE 2: CAREER TRAJECTORY TIMELINE ── */
+    function showCareerTimeline() {
+      if (!resumeText) { showToast('⚠️', 'Upload a resume first'); return }
+      rmWelcome();
+      const prompt = `Analyze this resume and return ONLY a JSON array (no markdown, no extra text) of 5-6 career trajectory milestones. Format: [{"time":"Now","skill":"Current Role Title","desc":"What they're doing now","type":"now"},{"time":"3 months","skill":"Next Step","desc":"Most impactful immediate action","type":"next"},{"time":"6 months","skill":"Skill to Acquire","desc":"Why and fastest path","type":"next"},{"time":"1 year","skill":"Target Role","desc":"Realistic next title","type":"future"},{"time":"2 years","skill":"Senior Step","desc":"Strategic long-term goal","type":"future"}]\n\nRESUME:\n${resumeText}`;
+      addMsg('user', '🗺️ Generating Career Trajectory', true);
+      msgs.push({ role: 'user', content: prompt });
+      showTyping();
+      fetch('http://localhost:8001/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ max_tokens: 600, system: SYS, messages: msgs.slice(-4) }) })
+        .then(r => r.json()).then(d => {
+          hideTyping();
+          const raw = d.content?.map(b => b.text || '').join('') || '[]';
+          let nodes;
+          try { nodes = JSON.parse(raw.replace(/```json|```/g, '').trim()); } catch { nodes = [{ time: "Now", skill: "Current Profile", desc: "Resume uploaded successfully.", type: "now" }, { time: "3 months", skill: "Skill Upgrade", desc: "Add certifications and update projects.", type: "next" }, { time: "1 year", skill: "Senior Role", desc: "Target senior positions matching your stack.", type: "future" }] }
+          msgs.push({ role: 'assistant', content: raw });
+          renderTimeline(nodes);
+        }).catch(() => { hideTyping(); addMsg('bot', '**Timeline requires server connection.** Start the local API server to use this feature.', false); });
+    }
+
+    function renderTimeline(nodes) {
+      const c = document.getElementById('msgs');
+      const w = document.createElement('div'); w.className = 'msg bot';
+      const av = document.createElement('div'); av.className = 'msg-av'; av.textContent = 'Q';
+      const body = document.createElement('div'); body.className = 'msg-body';
+      const nm = document.createElement('div'); nm.className = 'msg-nm'; nm.textContent = 'AXIOM · QUANTUM DRAFT';
+
+      const widget = document.createElement('div'); widget.className = 'timeline-widget';
+      let html = `<div class="tl-header">🗺️ CAREER TRAJECTORY — AXIOM FORECAST</div><div class="tl-track"><div class="tl-line"></div>`;
+      nodes.forEach(n => {
+        html += `<div class="tl-node"><div class="tl-dot ${n.type || 'future'}"></div><div class="tl-time">${n.time}</div><div class="tl-skill">${esc(n.skill)}</div><div class="tl-desc">${esc(n.desc)}</div><span class="tl-tag ${n.type || 'future'}">${n.type === 'now' ? 'CURRENT' : n.type === 'next' ? 'NEXT STEP' : 'FUTURE GOAL'}</span></div>`;
+      });
+      html += `</div>`;
+      widget.innerHTML = html;
+
+      body.appendChild(nm); body.appendChild(widget); w.appendChild(av); w.appendChild(body); c.appendChild(w); c.scrollTop = c.scrollHeight;
+    }
+
+    /* ── NEW FEATURE 3: COVER LETTER GENERATOR ── */
+    function openModal(id) { document.getElementById(id).classList.add('on') }
+    function closeModal(id) { document.getElementById(id).classList.remove('on') }
+
+    async function generateCoverLetter() {
+      const title = document.getElementById('cl-title').value.trim();
+      const company = document.getElementById('cl-company').value.trim();
+      const mgr = document.getElementById('cl-mgr').value.trim();
+      const req = document.getElementById('cl-req').value.trim();
+      if (!title || !company) { showToast('⚠️', 'Fill in Job Title and Company'); return }
+      if (!resumeText) { showToast('⚠️', 'Upload a resume first'); return }
+      closeModal('clModal');
+      rmWelcome();
+      const prompt = `Write a sharp, professional cover letter for this candidate applying to: ${title} at ${company}${mgr ? `, addressed to ${mgr}` : ''}${req ? `, emphasizing: ${req}` : ''}.
+
+The letter must:
+- Be 3-4 focused paragraphs
+- Open with a bold hook, not "I am applying for..."
+- Reference specific skills/projects from the resume
+- Close with a confident call to action
+- Sound human, not corporate-bot
+
+RESUME:\n${resumeText}`;
+
+      addMsg('user', `✉️ Generate cover letter for ${title} at ${company}`, true);
+      msgs.push({ role: 'user', content: prompt });
+      await callAPI();
+    }
+
+    /* ── NEW FEATURE 4: JOB KEYWORD SCANNER ── */
+    async function runKeywordScan() {
+      const jd = document.getElementById('jd-input').value.trim();
+      if (!jd) { showToast('⚠️', 'Paste a job description first'); return }
+      if (!resumeText) {
+        showToast('⚠️', 'Upload a resume first to compare');
+        // Still show JD keywords even without resume
+      }
+
+      document.getElementById('kwScanBtn').disabled = true; document.getElementById('kwScanBtn').textContent = '⏳ SCANNING...';
+
+      // Extract keywords from JD (client-side TF-IDF style)
+      const stopWords = new Set(['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'from', 'up', 'about', 'into', 'through', 'during', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'shall', 'can', 'this', 'that', 'these', 'those', 'i', 'you', 'he', 'she', 'it', 'we', 'they', 'what', 'which', 'who', 'how', 'when', 'where', 'why', 'all', 'each', 'every', 'both', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 'just', 'because', 'as', 'until', 'while', 'if', 'then', 'also', 'after', 'before', 'above', 'below', 'between', 'us', 'our', 'your', 'their', 'its', 'my', 'his', 'her', 'new', 'use', 'used', 'using', 'work', 'working', 'including', 'etc', 'per', 'across', 'within', 'without', 'provide', 'provided', 'providing']);
+
+      function tokenize(text) { return text.toLowerCase().match(/\b[a-z][a-z.+#]{2,}\b/g) || [] }
+      function countFreq(tokens) { const m = {}; tokens.forEach(t => { if (!stopWords.has(t)) m[t] = (m[t] || 0) + 1; }); return m; }
+
+      const jdTokens = tokenize(jd);
+      const jdFreq = countFreq(jdTokens);
+      const resumeTokens = resumeText ? tokenize(resumeText) : [];
+      const resumeSet = new Set(resumeTokens);
+
+      // Top keywords from JD sorted by frequency
+      const keywords = Object.entries(jdFreq).filter(([k, v]) => v >= 1 && k.length > 3).sort((a, b) => b[1] - a[1]).slice(0, 40).map(([k]) => k);
+
+      const present = keywords.filter(k => resumeSet.has(k));
+      const missing = keywords.filter(k => !resumeSet.has(k));
+      const score = resumeText ? Math.round((present.length / keywords.length) * 100) : 0;
+
+      // Show stats
+      document.getElementById('kwStats').innerHTML = `
+    <div class="kw-stat kw-present"><div class="kw-sn">${present.length}</div><div class="kw-sl">KEYWORDS FOUND</div></div>
+    <div class="kw-stat kw-missing"><div class="kw-sn">${missing.length}</div><div class="kw-sl">KEYWORDS MISSING</div></div>
+    <div class="kw-stat kw-score"><div class="kw-sn">${score}%</div><div class="kw-sl">MATCH SCORE</div></div>
+  `;
+
+      // Highlight resume text
+      if (resumeText) {
+        let highlighted = esc(resumeText.substring(0, 2000));
+        keywords.forEach(kw => {
+          const cls = resumeSet.has(kw) ? 'kw-hit' : 'kw-miss';
+          highlighted = highlighted.replace(new RegExp(`\\b(${kw})\\b`, 'gi'), `<span class="${cls}" title="${resumeSet.has(kw) ? '✓ Present in resume' : '✗ Missing from resume'}">$1</span>`);
+        });
+        document.getElementById('kwOutput').innerHTML = highlighted;
+      } else {
+        document.getElementById('kwOutput').innerHTML = `<span style="color:var(--muted)">Upload a resume to see keyword matches highlighted here.</span><br><br><strong style="color:var(--teal)">Top JD Keywords:</strong> ${keywords.join(', ')}`;
+      }
+
+      document.getElementById('kwResults').style.display = 'block';
+      document.getElementById('kwScanBtn').disabled = false; document.getElementById('kwScanBtn').textContent = '🔍 SCAN KEYWORDS';
+    }
+
+    /* ── NEW FEATURE 5: EXPORT CHAT AS PDF (print) ── */
+    function exportChatPDF() {
+      const msgs_el = document.getElementById('msgs');
+      const printWin = window.open('', '_blank', 'width=800,height=600');
+      const content = msgs_el.innerHTML;
+      printWin.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>AXIOM Analysis — Quantum Draft</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><style>body{font-family:'Inter',sans-serif;background:#030912;color:#e8f4f0;padding:40px;max-width:800px;margin:0 auto;}.msg{margin-bottom:24px;}.bubble{padding:16px 20px;border-radius:12px;font-size:14px;line-height:1.75;}.msg.bot .bubble{background:#0a1628;border:1px solid rgba(0,212,170,0.2);}.msg.user .bubble{background:#00a888;color:#030912;}.msg-nm{font-size:10px;color:#00d4aa;letter-spacing:2px;margin-bottom:6px;font-family:monospace;}.msg.user .msg-nm{color:#6b8fa0;text-align:right;}.msg-av{display:none}.verdict-box{background:rgba(0,212,170,0.08);border-left:3px solid #00d4aa;padding:10px 14px;border-radius:0 6px 6px 0;color:#00d4aa;font-weight:600;margin-top:10px;}.welcome,.w-grid,.w-logo-wrap,.w-title,.w-sub{display:none!important;}strong{color:#00d4aa;}h1{font-family:monospace;color:#00d4aa;font-size:22px;letter-spacing:4px;margin-bottom:4px;}p.sub{color:#6b8fa0;font-size:11px;letter-spacing:2px;margin-bottom:32px;font-family:monospace;}hr{border:none;border-top:1px solid rgba(0,212,170,0.2);margin:24px 0;}@media print{body{background:white;color:#111;}.msg.bot .bubble{background:#f5f5f5;border:1px solid #ddd;}.verdict-box{background:#f0fff8;border-left-color:#007a63;color:#007a63;}strong{color:#007a63;}h1{color:#007a63;}p.sub{color:#666;}}</style></head><body><h1>AXIOM ANALYSIS</h1><p class="sub">QUANTUM DRAFT · CAREER INTELLIGENCE REPORT · ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }).toUpperCase()}</p><hr>${content}</body></html>`);
+      printWin.document.close();
+      printWin.onload = () => { printWin.focus(); printWin.print(); }
+      showToast('📥', 'Export window opened — print or save as PDF');
+    }
+
+    /* ── TOAST ── */
+    function showToast(icon, msg, duration = 2800) {
+      const t = document.getElementById('toast');
+      document.getElementById('toastIcon').textContent = icon;
+      document.getElementById('toastMsg').textContent = msg;
+      t.classList.add('show'); setTimeout(() => t.classList.remove('show'), duration);
+    }
+
+    /* ── CHAT CORE ── */
+    function autoH(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 130) + 'px' }
+    function onKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg() } }
+    function sp(t) { document.getElementById('msgIn').value = t; sendMsg() }
+    function rmWelcome() { document.getElementById('welcome')?.remove() }
+
+    async function sendMsg() {
+      if (busy) return;
+      const inp = document.getElementById('msgIn'); const t = inp.value.trim(); if (!t) return;
+      inp.value = ''; inp.style.height = 'auto'; rmWelcome();
+      addMsg('user', t, true); msgs.push({ role: 'user', content: t }); await callAPI();
+    }
+
+    async function callAPI() {
+      if (busy) return;
+      busy = true; document.getElementById('sendBtn').disabled = true; showTyping();
+      try {
+        const res = await fetch('http://localhost:8001/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ max_tokens: 1000, system: SYS, messages: msgs.slice(-6) }) });
+        if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.detail || `Server error: ${res.status}`); }
+        const d = await res.json();
+        const reply = d.content?.map(b => b.text || '').join('') || 'No response.';
+        hideTyping(); addMsg('bot', reply, false); msgs.push({ role: 'assistant', content: reply });
+      } catch (e) { hideTyping(); addMsg('bot', `**Connection error.** AXIOM is temporarily offline. Details: ${e.message}`, false); }
+      busy = false; document.getElementById('sendBtn').disabled = false; document.getElementById('msgIn').focus();
+    }
+
+    function clearChat() {
+      msgs = []; resumeText = ''; resumeFile = '';
+      document.getElementById('upZone').style.display = ''; document.getElementById('ufCard').classList.remove('on'); document.getElementById('rBadge').classList.remove('on');
+      document.getElementById('msgs').innerHTML = welcomeHTML();
+    }
+
+    /* ── RENDER ── */
+    function addMsg(role, content, isUser) {
+      const c = document.getElementById('msgs');
+      const w = document.createElement('div'); w.className = `msg ${role}`;
+      const av = document.createElement('div'); av.className = 'msg-av'; av.textContent = role === 'bot' ? 'Q' : 'QD';
+      const body = document.createElement('div'); body.className = 'msg-body';
+      const nm = document.createElement('div'); nm.className = 'msg-nm'; nm.textContent = role === 'bot' ? 'AXIOM · QUANTUM DRAFT' : 'YOU';
+      if (isUser) nm.style.textAlign = 'right';
+      const b = document.createElement('div'); b.className = 'bubble';
+      b.innerHTML = role === 'bot' ? fmtBot(content) : esc(content);
+      body.appendChild(nm); body.appendChild(b); w.appendChild(av); w.appendChild(body); c.appendChild(w); c.scrollTop = c.scrollHeight;
+    }
+
+    function addUploadBubble(fname, chars) {
+      rmWelcome(); const c = document.getElementById('msgs');
+      const w = document.createElement('div'); w.className = 'msg user';
+      const av = document.createElement('div'); av.className = 'msg-av'; av.textContent = 'QD';
+      const body = document.createElement('div'); body.className = 'msg-body';
+      const nm = document.createElement('div'); nm.className = 'msg-nm'; nm.textContent = 'YOU'; nm.style.textAlign = 'right';
+      const b = document.createElement('div'); b.className = 'up-bubble';
+      b.innerHTML = `<div class="up-row"><div class="up-ico">📄</div><div><div class="up-fname">${esc(fname)}</div><div class="up-meta">~${Math.round(chars / 5)} words extracted · Quantum Draft AI ready</div></div></div><div class="up-bar"><div class="up-fill"></div></div>`;
+      body.appendChild(nm); body.appendChild(b); w.appendChild(av); w.appendChild(body); c.appendChild(w); c.scrollTop = c.scrollHeight;
+    }
+
+    function showTyping() {
+      const c = document.getElementById('msgs');
+      const w = document.createElement('div'); w.className = 'msg bot'; w.id = 'typer';
+      const av = document.createElement('div'); av.className = 'msg-av'; av.textContent = 'Q';
+      const body = document.createElement('div'); body.className = 'msg-body';
+      const nm = document.createElement('div'); nm.className = 'msg-nm'; nm.textContent = 'AXIOM · QUANTUM DRAFT';
+      const t = document.createElement('div'); t.className = 'typing'; t.innerHTML = '<span></span><span></span><span></span>';
+      body.appendChild(nm); body.appendChild(t); w.appendChild(av); w.appendChild(body); c.appendChild(w); c.scrollTop = c.scrollHeight;
+    }
+    function hideTyping() { document.getElementById('typer')?.remove() }
+
+    function esc(t) { return t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>') }
+
+    function fmtBot(t) {
+      t = t.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      t = t.replace(/`([^`]+)`/g, '<span class="tag">$1</span>');
+      t = t.replace(/(— AXIOM VERDICT:.*?)(\n|$)/g, '<div class="verdict-box">$1</div>');
+      t = t.replace(/^#{1,3}\s(.+)$/gm, '<div style="font-family:\'Orbitron\',sans-serif;font-size:12px;letter-spacing:2px;color:var(--teal);margin:14px 0 6px;text-transform:uppercase">$1</div>');
+      t = t.replace(/^(\d+)\.\s(.+)$/gm, '<li><strong>$1.</strong> $2</li>');
+      t = t.replace(/(<li>[\s\S]*?<\/li>\n?)+/g, m => `<ol style="padding-left:20px;margin:8px 0">${m}</ol>`);
+      t = t.replace(/^[-•]\s(.+)$/gm, '<li>$1</li>');
+      t = t.replace(/(<li>[\s\S]*?<\/li>\n?)+/g, m => `<ul style="padding-left:20px;margin:8px 0">${m}</ul>`);
+      t = t.replace(/\n/g, '<br>');
+      return t;
+    }
+
+    function welcomeHTML() { return `<div class="welcome" id="welcome"><div class="w-logo-wrap"><div class="w-ring2"></div><div class="w-ring"></div><div class="w-hex">Q</div></div><div class="w-title">MEET AXIOM</div><p class="w-sub">Quantum Draft · AI Career Intelligence Engine</p><div class="w-grid"><div class="w-card" onclick="document.getElementById('fileInput').click()"><div class="w-icon">📁</div><div class="w-ttl">Upload Resume</div><div class="w-desc">Drop PDF or DOCX for full AI analysis</div></div><div class="w-card" onclick="sp('What jobs match a Python + ML + cloud engineer with 4 years experience?')"><div class="w-icon">🎯</div><div class="w-ttl">Job Matching</div><div class="w-desc">Find roles that fit your skill profile</div></div><div class="w-card" onclick="sp('Write a professional summary for a full-stack developer with 4 years React and Node.js')"><div class="w-icon">✍️</div><div class="w-ttl">Resume Writing</div><div class="w-desc">AI-crafted content that gets interviews</div></div><div class="w-card" onclick="sp('Prepare me for a senior software engineer interview at a top tech company')"><div class="w-icon">🎤</div><div class="w-ttl">Interview Prep</div><div class="w-desc">Questions, answers & salary tactics</div></div></div></div>`; }
+
+    // Close modals on overlay click
+    document.querySelectorAll('.modal-ov').forEach(el => el.addEventListener('click', e => { if (e.target === el) el.classList.remove('on') }));
+    window.addEventListener('load', () => document.getElementById('msgIn').focus());
+  </script>
+</body>
+
+</html>
