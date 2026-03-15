@@ -2156,7 +2156,7 @@ RULES:
       addMsg('user', '📈 Generating Radar Score Chart', true);
       msgs.push({ role: 'user', content: prompt });
       showTyping();
-      fetch('http://localhost:8001/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ max_tokens: 300, system: SYS, messages: msgs.slice(-4) }) })
+      fetch('https://axiom-ai-career-intelligence.onrender.com/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ max_tokens: 300, system: SYS, messages: msgs.slice(-4) }) })
         .then(r => r.json()).then(d => {
           hideTyping();
           const raw = d.content?.map(b => b.text || '').join('') || '{}';
@@ -2251,7 +2251,7 @@ RULES:
       addMsg('user', '🗺️ Generating Career Trajectory', true);
       msgs.push({ role: 'user', content: prompt });
       showTyping();
-      fetch('http://localhost:8001/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ max_tokens: 600, system: SYS, messages: msgs.slice(-4) }) })
+      fetch('https://axiom-ai-career-intelligence.onrender.com/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ max_tokens: 600, system: SYS, messages: msgs.slice(-4) }) })
         .then(r => r.json()).then(d => {
           hideTyping();
           const raw = d.content?.map(b => b.text || '').join('') || '[]';
@@ -2397,7 +2397,7 @@ RESUME:\n${resumeText}`;
       if (busy) return;
       busy = true; document.getElementById('sendBtn').disabled = true; showTyping();
       try {
-        const res = await fetch('http://localhost:8001/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ max_tokens: 1000, system: SYS, messages: msgs.slice(-6) }) });
+        const res = await fetch('https://axiom-ai-career-intelligence.onrender.com/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ max_tokens: 1000, system: SYS, messages: msgs.slice(-6) }) });
         if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.detail || `Server error: ${res.status}`); }
         const d = await res.json();
         const reply = d.content?.map(b => b.text || '').join('') || 'No response.';
