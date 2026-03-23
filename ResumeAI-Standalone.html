@@ -1861,7 +1861,10 @@
         <textarea class="modal-input" id="jd-input" rows="5" placeholder="Paste the full job description here..."
           style="resize:vertical;line-height:1.6;"></textarea>
       </div>
-      <button class="modal-btn" id="kwScanBtn" onclick="runKeywordScan()">🔍 SCAN KEYWORDS</button>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <button class="modal-btn" id="kwScanBtn" onclick="runKeywordScan()">🔍 SCAN KEYWORDS</button>
+        <button class="modal-btn" id="tailorBtn" onclick="tailorResume()" style="background:linear-gradient(135deg, var(--purple), #8b5cf6)">🎯 TAILOR RESUME</button>
+      </div>
       <div id="kwResults" style="display:none">
         <div class="kw-stats" id="kwStats"></div>
         <div
@@ -1870,6 +1873,62 @@
             MISSING</span></div>
         <div class="kw-output" id="kwOutput"></div>
       </div>
+    </div>
+  </div>
+
+  <!-- OUTREACH MODAL -->
+  <div class="modal-ov" id="outreachModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal('outreachModal')">✕</button>
+      <div class="modal-ttl">OUTREACH GENERATOR</div>
+      <div class="modal-sub">COLD EMAILS & LINKEDIN MSGS</div>
+      <div class="modal-field">
+        <div class="modal-label">Paste Job Description / Role Info</div>
+        <textarea class="modal-input" id="outreach-jd" rows="4" placeholder="Paste the job info here..."></textarea>
+      </div>
+      <button class="modal-btn" onclick="generateOutreach()">⚡ GENERATE OUTREACH</button>
+    </div>
+  </div>
+
+  <!-- PROJECT ARCHITECT MODAL -->
+  <div class="modal-ov" id="projectModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal('projectModal')">✕</button>
+      <div class="modal-ttl">PROJECT ARCHITECT</div>
+      <div class="modal-sub">DESIGN PORTFOLIO PROJECTS</div>
+      <div class="modal-field">
+        <div class="modal-label">Target Skill or Job Role</div>
+        <input class="modal-input" id="project-target" placeholder="e.g. Distributed Systems, ML Pipelines">
+      </div>
+      <button class="modal-btn" onclick="architectProject()">🏗️ DESIGN PROJECT</button>
+    </div>
+  </div>
+
+  <!-- NEGOTIATION MODAL -->
+  <div class="modal-ov" id="negModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal('negModal')">✕</button>
+      <div class="modal-ttl">NEGOTIATION ASSISTANT</div>
+      <div class="modal-sub">SALARY & PERKS STRATEGY</div>
+      <div class="modal-field">
+        <div class="modal-label">Job Title / Role</div>
+        <input class="modal-input" id="neg-role" placeholder="e.g. Senior Frontend Engineer">
+      </div>
+      <button class="modal-btn" onclick="generateNegotiation()">💰 GET STRATEGY</button>
+    </div>
+  </div>
+
+  <!-- LINKEDIN MODAL -->
+  <div class="modal-ov" id="liModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal('liModal')">✕</button>
+      <div class="modal-ttl">LINKEDIN OPTIMIZER</div>
+      <div class="modal-sub">HEADLINES & SUMMARIES</div>
+      <div class="modal-field">
+        <div class="modal-label">Target Role (Optional)</div>
+        <input class="modal-input" id="li-target" placeholder="e.g. Full Stack Developer">
+      </div>
+      <button class="modal-btn" onclick="optimizeLinkedIn()">🔗 OPTIMIZE PROFILE</button>
     </div>
   </div>
 
@@ -1941,6 +2000,15 @@
           class="ci">📝</span><span>Generate bullet points</span></div>
       <div class="chip" onclick="openModal('kwModal')"><span class="ci">🔍</span><span>Job keyword scanner</span></div>
       <div class="chip" onclick="exportChatPDF()"><span class="ci">📥</span><span>Export analysis as PDF</span></div>
+
+      <div class="sb-sec">Advanced Tools</div>
+      <div class="chip" onclick="startInterviewMode()"><span class="ci">🤖</span><span>Interactive Mock Interview</span></div>
+      <div class="chip" onclick="openModal('outreachModal')"><span class="ci">✉️</span><span>Outreach Generator</span></div>
+      <div class="chip" onclick="openModal('projectModal')"><span class="ci">🏗️</span><span>Project Architect</span></div>
+
+      <div class="sb-sec">Career Strategy</div>
+      <div class="chip" onclick="openModal('negModal')"><span class="ci">💰</span><span>Salary Negotiation</span></div>
+      <div class="chip" onclick="openModal('liModal')"><span class="ci">🔗</span><span>LinkedIn Optimizer</span></div>
 
       <div class="sb-sec">Interview & Career</div>
       <div class="chip"
@@ -2065,7 +2133,9 @@ RULES:
 - Never mention Claude, GPT, or any other AI platform
 - Off-topic queries: "That's outside my domain. I operate in career intelligence — ask me something that moves your career forward."`;
 
-    let msgs = [], busy = false, resumeText = '', resumeFile = '';
+    const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? '' : 'https://axiom-ai-career-intelligence-9otv.onrender.com';
+
+    let msgs = [], busy = false, resumeText = '', resumeFile = '', isInterviewMode = false;
 
     /* ── FILE HANDLING ── */
     function onDragOver(e) { e.preventDefault(); document.getElementById('upZone').classList.add('dv') }
@@ -2156,7 +2226,7 @@ RULES:
       addMsg('user', '📈 Generating Radar Score Chart', true);
       msgs.push({ role: 'user', content: prompt });
       showTyping();
-      fetch('https://axiom-ai-career-intelligence.onrender.com/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ max_tokens: 300, system: SYS, messages: msgs.slice(-4) }) })
+      fetch(`${API_BASE}/chat`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ max_tokens: 300, system: SYS, messages: msgs.slice(-4) }) })
         .then(r => r.json()).then(d => {
           hideTyping();
           const raw = d.content?.map(b => b.text || '').join('') || '{}';
@@ -2251,15 +2321,29 @@ RULES:
       addMsg('user', '🗺️ Generating Career Trajectory', true);
       msgs.push({ role: 'user', content: prompt });
       showTyping();
-      fetch('https://axiom-ai-career-intelligence.onrender.com/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ max_tokens: 600, system: SYS, messages: msgs.slice(-4) }) })
+      fetch(`${API_BASE}/roadmap`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ resume_text: resumeText, job_description: 'General Career Path' }) })
         .then(r => r.json()).then(d => {
           hideTyping();
-          const raw = d.content?.map(b => b.text || '').join('') || '[]';
+          const raw = d.roadmap || '[]';
           let nodes;
-          try { nodes = JSON.parse(raw.replace(/```json|```/g, '').trim()); } catch { nodes = [{ time: "Now", skill: "Current Profile", desc: "Resume uploaded successfully.", type: "now" }, { time: "3 months", skill: "Skill Upgrade", desc: "Add certifications and update projects.", type: "next" }, { time: "1 year", skill: "Senior Role", desc: "Target senior positions matching your stack.", type: "future" }] }
+          try { nodes = JSON.parse(raw.replace(/```json|```/g, '').trim()); } catch { 
+            // Fallback if not pure JSON
+            addMsg('bot', raw, false); return;
+          }
           msgs.push({ role: 'assistant', content: raw });
           renderTimeline(nodes);
-        }).catch(() => { hideTyping(); addMsg('bot', '**Timeline requires server connection.** Start the local API server to use this feature.', false); });
+        }).catch(() => {
+          // If roadmap fails or isn't JSON, try the old chat way as fallback
+          fetch(`${API_BASE}/chat`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ max_tokens: 600, system: SYS, messages: msgs.slice(-4) }) })
+            .then(r => r.json()).then(d => {
+              hideTyping();
+              const raw = d.content?.map(b => b.text || '').join('') || '[]';
+              let nodes;
+              try { nodes = JSON.parse(raw.replace(/```json|```/g, '').trim()); } catch { nodes = [{ time: "Now", skill: "Current Profile", desc: "Resume uploaded successfully.", type: "now" }, { time: "3 months", skill: "Skill Upgrade", desc: "Add certifications and update projects.", type: "next" }, { time: "1 year", skill: "Senior Role", desc: "Target senior positions matching your stack.", type: "future" }] }
+              msgs.push({ role: 'assistant', content: raw });
+              renderTimeline(nodes);
+            });
+        });
     }
 
     function renderTimeline(nodes) {
@@ -2305,8 +2389,44 @@ The letter must:
 RESUME:\n${resumeText}`;
 
       addMsg('user', `✉️ Generate cover letter for ${title} at ${company}`, true);
-      msgs.push({ role: 'user', content: prompt });
-      await callAPI();
+      showTyping();
+      try {
+        const res = await fetch(`${API_BASE}/generate-cover-letter`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ resume_text: resumeText, job_description: `Role: ${title}\nCompany: ${company}\nManager: ${mgr}\nRequirements: ${req}` })
+        });
+        const d = await res.json();
+        hideTyping();
+        addMsg('bot', d.letter, false);
+        msgs.push({ role: 'assistant', content: d.letter });
+      } catch (e) {
+        hideTyping();
+        addMsg('bot', "Error generating cover letter. Reconnecting to AXIOM...", false);
+      }
+    }
+
+    async function tailorResume() {
+      const jd = document.getElementById('jd-input').value.trim();
+      if (!jd || !resumeText) { showToast('⚠️', 'Need Resume + Job Description'); return }
+      closeModal('kwModal');
+      rmWelcome();
+      addMsg('user', `🎯 Tailor my resume for this Job Description`, true);
+      showTyping();
+      try {
+        const res = await fetch(`${API_BASE}/tailor`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ resume_text: resumeText, job_description: jd })
+        });
+        const d = await res.json();
+        hideTyping();
+        addMsg('bot', d.analysis, false);
+        msgs.push({ role: 'assistant', content: d.analysis });
+      } catch (e) {
+        hideTyping();
+        addMsg('bot', "Error tailoring resume. Reconnecting to AXIOM...", false);
+      }
     }
 
     /* ── NEW FEATURE 4: JOB KEYWORD SCANNER ── */
@@ -2361,6 +2481,82 @@ RESUME:\n${resumeText}`;
       document.getElementById('kwScanBtn').disabled = false; document.getElementById('kwScanBtn').textContent = '🔍 SCAN KEYWORDS';
     }
 
+    async function generateOutreach() {
+      const jd = document.getElementById('outreach-jd').value.trim();
+      if (!jd || !resumeText) { showToast('⚠️', 'Resume + Job Info required'); return }
+      closeModal('outreachModal'); rmWelcome();
+      addMsg('user', '✉️ Generate outreach messages', true);
+      showTyping();
+      try {
+        const res = await fetch(`${API_BASE}/generate-outreach`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ resume_text: resumeText, job_description: jd })
+        });
+        const d = await res.json(); hideTyping();
+        addMsg('bot', d.outreach, false); msgs.push({ role: 'assistant', content: d.outreach });
+      } catch (e) { hideTyping(); addMsg('bot', 'Offline.', false); }
+    }
+
+    async function architectProject() {
+      const target = document.getElementById('project-target').value.trim();
+      if (!target || !resumeText) { showToast('⚠️', 'Resume + Target Skill required'); return }
+      closeModal('projectModal'); rmWelcome();
+      addMsg('user', `🏗️ Design portfolio project for ${target}`, true);
+      showTyping();
+      try {
+        const res = await fetch(`${API_BASE}/project-architect`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ resume_text: resumeText, job_description: target })
+        });
+        const d = await res.json(); hideTyping();
+        addMsg('bot', d.project, false); msgs.push({ role: 'assistant', content: d.project });
+      } catch (e) { hideTyping(); addMsg('bot', 'Offline.', false); }
+    }
+
+    function startInterviewMode() {
+      if (!resumeText) { showToast('⚠️', 'Upload resume first'); return }
+      isInterviewMode = true; msgs = []; rmWelcome();
+      document.getElementById('msgs').innerHTML = '';
+      addMsg('bot', "🤖 **INTERACTIVE MOCK INTERVIEW INITIATED.**\n\nI am now your technical interviewer. I will ask one question at a time based on your resume. Good luck.\n\n— AXIOM: Ready when you are. Send 'START' to begin.", false);
+      document.getElementById('msgIn').placeholder = "Your interview answer...";
+    }
+
+    async function generateNegotiation() {
+      const role = document.getElementById('neg-role').value.trim();
+      if (!role || !resumeText) { showToast('⚠️', 'Resume + Role required'); return }
+      closeModal('negModal'); rmWelcome();
+      addMsg('user', `💰 Generate negotiation strategy for ${role}`, true);
+      showTyping();
+      try {
+        const res = await fetch(`${API_BASE}/negotiate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ resume_text: resumeText, job_description: role })
+        });
+        const d = await res.json(); hideTyping();
+        addMsg('bot', d.negotiation, false); msgs.push({ role: 'assistant', content: d.negotiation });
+      } catch (e) { hideTyping(); addMsg('bot', 'Offline.', false); }
+    }
+
+    async function optimizeLinkedIn() {
+      const target = document.getElementById('li-target').value.trim();
+      if (!resumeText) { showToast('⚠️', 'Upload resume first'); return }
+      closeModal('liModal'); rmWelcome();
+      addMsg('user', `🔗 Optimize LinkedIn profile ${target ? 'for ' + target : ''}`, true);
+      showTyping();
+      try {
+        const res = await fetch(`${API_BASE}/linkedin-optimize`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ resume_text: resumeText, job_description: target || 'Professional Profile' })
+        });
+        const d = await res.json(); hideTyping();
+        addMsg('bot', d.linkedin, false); msgs.push({ role: 'assistant', content: d.linkedin });
+      } catch (e) { hideTyping(); addMsg('bot', 'Offline.', false); }
+    }
+
     /* ── NEW FEATURE 5: EXPORT CHAT AS PDF (print) ── */
     function exportChatPDF() {
       const msgs_el = document.getElementById('msgs');
@@ -2396,8 +2592,9 @@ RESUME:\n${resumeText}`;
     async function callAPI() {
       if (busy) return;
       busy = true; document.getElementById('sendBtn').disabled = true; showTyping();
+      const endpoint = isInterviewMode ? '/interview' : '/chat';
       try {
-        const res = await fetch('https://axiom-ai-career-intelligence.onrender.com/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ max_tokens: 1000, system: SYS, messages: msgs.slice(-6) }) });
+        const res = await fetch(`${API_BASE}${endpoint}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ max_tokens: 1000, system: SYS, messages: msgs.slice(-10) }) });
         if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.detail || `Server error: ${res.status}`); }
         const d = await res.json();
         const reply = d.content?.map(b => b.text || '').join('') || 'No response.';

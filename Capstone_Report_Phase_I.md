@@ -158,19 +158,50 @@ The **AI Resume Analyzer** represents a significant step forward in automating t
 
 ### 7. Appendices
 
-#### A. Data Flow Diagram
-The data flows from the **User (Resume Upload)** → **Frontend (Content Extraction)** → **FastAPI (Processing Engine)** → **Results (Scores/Matching)** → **User Interface**.
+#### B. Sample Coding: Main Analysis Endpoint
+```python
+@app.post("/analyze")
+async def analyze_resume(request: TextAnalysisRequest):
+    text = request.resume_text
+    
+    # Information Extraction
+    skills = extract_skills_from_text(text)
+    exp_level = estimate_experience_level(text)
+    category = predict_category(skills)
+    
+    # Scoring and Job Matching
+    scores = score_resume(text, skills, detect_sections(text))
+    job_matches = []
+    for job in JOB_DATABASE:
+        similarity = tfidf_cosine_similarity(text, job["description"])
+        job_matches.append({
+            "title": job["title"],
+            "match_percentage": round(similarity * 100 * 1.8, 1)
+        })
+    
+    return {"candidate": {"experience": exp_level}, "scores": scores, "top_matches": job_matches}
+```
 
-#### B. Sample Coding (Backend Scoring)
+#### C. Sample Coding: Scoring Algorithm
 ```python
 def score_resume(text, skills, sections):
-    # Skill Coverage (30 points)
-    # Experience Depth (20 points)
-    # Projects (15 points)
-    # Impact Metrics (15 points)
-    # ATS Compatibility (10 points)
-    # Action Verbs (10 points)
-    ...
+    scores = {}
+    # 1. Skill Coverage (30)
+    scores["skill_coverage"] = min(30, len(skills) * 2)
+    # 2. Experience Depth (20)
+    exp_score = 15 if any(w in text.lower() for w in ["senior", "lead"]) else 8
+    scores["experience_depth"] = exp_score
+    # 3. Impact Metrics (15)
+    nums = re.findall(r'\d+%|\d+x|\$\d+', text)
+    scores["impact_metrics"] = min(15, len(nums) * 3)
+    # 4. ATS Compatibility (10)
+    ats = 0
+    if sections["education"]: ats += 5
+    if sections["experience"]: ats += 5
+    scores["ats_compatibility"] = ats
+    
+    scores["total"] = sum(scores.values())
+    return scores
 ```
 
 #### C. Sample Input (Resume Text)

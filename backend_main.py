@@ -207,6 +207,12 @@ def score_resume(text: str, skills: list, sections: dict) -> dict:
     if sections["experience"]: ats += 2
     if extract_email(text): ats += 2
     if extract_phone(text): ats += 2
+    
+    # 7. Structural Audit (Penalize tables/columns if suspected)
+    # Note: Modern ATS handle them better, but it's a good 'best practice' score
+    if "  " in text or "\t" in text: # Large gaps often indicate columns
+        ats = max(0, ats - 2)
+    
     scores["ats_compatibility"] = ats
     
     # 6. Action Verbs (10)
@@ -244,11 +250,51 @@ def keyword_density(text: str) -> dict:
         freq[w] = freq.get(w, 0) + 1
     return dict(sorted(freq.items(), key=lambda x: x[1], reverse=True)[:20])
 
+async def call_groq(messages: List[Dict[str, Any]], system: Optional[str] = None) -> str:
+    api_key = os.getenv("GROQ_API_KEY")
+    if not api_key:
+        return "Error: GROQ_API_KEY not found in environment."
+    
+    groq_url = "https://api.groq.com/openai/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "content-type": "application/json"
+    }
+    
+    formatted_messages = []
+    if system:
+        formatted_messages.append({"role": "system", "content": system})
+    formatted_messages.extend(messages)
+    
+    models_to_try = ["llama-3.1-8b-instant", "llama-3.3-70b-versatile", "gemma2-9b-it"]
+    
+    async with httpx.AsyncClient() as client:
+        for model in models_to_try:
+            payload = {
+                "max_tokens": 1000,
+                "messages": formatted_messages,
+                "model": model
+            }
+            try:
+                response = await client.post(groq_url, headers=headers, json=payload, timeout=30.0)
+                response.raise_for_status()
+                data = response.json()
+                return data["choices"][0]["message"]["content"]
+            except Exception as e:
+                if model == models_to_try[-1]:
+                    return f"Error after trying all models: {str(e)}"
+                continue
+    return "Unknown error calling Groq."
+
 # ─── API ENDPOINTS ─────────────────────────────────────────────────────────────
 
 @app.get("/")
 def root():
     return FileResponse("ResumeAI-Standalone.html")
+
+@app.get("/health")
+def health_check():
+    return {"status": "ok", "message": "Axiom AI Career Intelligence is running"}
 
 @app.get("/jobs")
 def get_jobs():
@@ -324,6 +370,12 @@ async def chat_with_axiom(request: ChatRequest, x_api_key: Optional[str] = Heade
     if not api_key:
         raise HTTPException(status_code=401, detail="Missing API Key. Please provide an x-api-key header or set GROQ_API_KEY in the environment.")
     
+    # The existing call_groq function uses os.getenv("GROQ_API_KEY").
+    # For this specific endpoint, if x_api_key is provided, we need to ensure it's used.
+    # A simple way is to temporarily set the env var or modify call_groq to accept an explicit key.
+    # For now, we'll keep the original logic here to support the custom header for /chat,
+    # and use the refactored call_groq for the new endpoints which rely on the env var.
+    
     groq_url = "https://api.groq.com/openai/v1/chat/completions"
     headers = {
         "Authorization": f"Bearer {api_key}",
@@ -333,38 +385,199 @@ async def chat_with_axiom(request: ChatRequest, x_api_key: Optional[str] = Heade
     formatted_messages = []
     if request.system:
         formatted_messages.append({"role": "system", "content": request.system})
-        
     for msg in request.messages:
         formatted_messages.append({"role": msg["role"], "content": msg["content"]})
     
-    payload = {
-        "max_tokens": request.max_tokens,
-        "messages": formatted_messages
-    }
-
-    models_to_try = [
-        "llama-3.1-8b-instant",
-        "llama-3.3-70b-versatile",
-        "gemma2-9b-it"
-    ]
-
+    models_to_try = ["llama-3.1-8b-instant", "llama-3.3-70b-versatile", "gemma2-9b-it"]
     async with httpx.AsyncClient() as client:
         for model in models_to_try:
-            payload["model"] = model
+            payload = {"max_tokens": request.max_tokens, "messages": formatted_messages, "model": model}
             try:
                 response = await client.post(groq_url, headers=headers, json=payload, timeout=30.0)
                 response.raise_for_status()
-                
                 data = response.json()
-                return {
-                    "content": [{"text": data["choices"][0]["message"]["content"]}]
-                }
+                return {"content": [{"text": data["choices"][0]["message"]["content"]}]}
             except httpx.HTTPStatusError as e:
                 if e.response.status_code == 429 and model != models_to_try[-1]:
                     continue
                 raise HTTPException(status_code=e.response.status_code, detail=f"Groq API Error: {e.response.text}")
             except httpx.RequestError as e:
                 raise HTTPException(status_code=500, detail=f"Failed to connect to Groq API: {str(e)}")
+
+class JobRequirementRequest(BaseModel):
+    resume_text: str
+    job_description: str
+
+@app.post("/tailor")
+async def tailor_resume(request: JobRequirementRequest):
+    system_prompt = "You are an expert career coach and ATS optimization specialist. Your goal is to help candidates tailor their resume to a specific job description."
+    user_msg = f"""
+    JOB DESCRIPTION:
+    {request.job_description}
+
+    CANDIDATE RESUME:
+    {request.resume_text}
+
+    TASK:
+    1. Identify the top 5 most important keywords/skills from the JD that are missing or weak in the resume.
+    2. Suggest specific rewrites for 3-4 existing resume bullet points to better highlight relevant experience.
+    3. Provide a brief (2-3 sentence) summary of how well the candidate fits this role.
+    
+    Format your response in Markdown.
+    """
+    
+    result = await call_groq([{"role": "user", "content": user_msg}], system=system_prompt)
+    return {"analysis": result}
+
+@app.post("/generate-cover-letter")
+async def generate_cover_letter_api(request: JobRequirementRequest):
+    system_prompt = "You are an expert career coach. Your goal is to write a compelling, professional, and personalized cover letter."
+    user_msg = f"""
+    JOB DESCRIPTION:
+    {request.job_description}
+
+    CANDIDATE RESUME:
+    {request.resume_text}
+
+    TASK:
+    Generate a professional cover letter (max 300 words). 
+    - Mention the specific company or role if identifiable from the JD.
+    - Highlight 2-3 key achievements from the resume that directly solve problems mentioned in the JD.
+    - Use a professional yet enthusiastic tone.
+    - Leave placeholders like [Your Name], [Company Name], etc., only if they are not found in the texts.
+    
+    Format your response in Markdown.
+    """
+    
+    result = await call_groq([{"role": "user", "content": user_msg}], system=system_prompt)
+    return {"letter": result}
+
+@app.post("/roadmap")
+async def generate_roadmap(request: JobRequirementRequest):
+    system_prompt = "You are a specialized technical mentor. Your goal is to bridge the skills gap between a candidate and their dream job."
+    user_msg = f"""
+    JOB DESCRIPTION:
+    {request.job_description}
+
+    CANDIDATE RESUME:
+    {request.resume_text}
+
+    TASK:
+    1. Identify the 'Skills Gap' (skills in JD but not in resume).
+    2. Create a 4-week learning roadmap to acquire these skills.
+    3. Suggest one small 'Portfolio Project' the candidate could build to demonstrate these new skills.
+    
+    Format your response in Markdown.
+    """
+    
+    result = await call_groq([{"role": "user", "content": user_msg}], system=system_prompt)
+    return {"roadmap": result}
+
+@app.post("/generate-outreach")
+async def generate_outreach_api(request: JobRequirementRequest):
+    system_prompt = "You are a networking expert. Your goal is to write high-conversion cold emails and LinkedIn messages."
+    user_msg = f"""
+    JOB DESCRIPTION:
+    {request.job_description}
+
+    CANDIDATE RESUME:
+    {request.resume_text}
+
+    TASK:
+    Generate two versions of an outreach message:
+    1. A professional Cold Email (concise, clear value prop).
+    2. A short LinkedIn DM (punchy, low-friction).
+    - Reference specific skills from the resume that match the JD.
+    - Leave placeholders for [Hiring Manager Name] if not identified.
+    
+    Format your response in Markdown with clear headings.
+    """
+    
+    result = await call_groq([{"role": "user", "content": user_msg}], system=system_prompt)
+    return {"outreach": result}
+
+@app.post("/project-architect")
+async def project_architect_api(request: JobRequirementRequest):
+    system_prompt = "You are a senior software architect. Your goal is to design a portfolio project that proves a candidate's competence in a specific area."
+    user_msg = f"""
+    RESUME:
+    {request.resume_text}
+
+    TARGET SKILL GAP OR JOB:
+    {request.job_description}
+
+    TASK:
+    Design a 'Portfolio Project' to bridge the gap.
+    1. Project Name & Concept.
+    2. Architecture & Tech Stack (Frontend, Backend, Database, Cloud).
+    3. Core Features (MVP).
+    4. Complexity Level (Explain why this proves competence).
+    
+    Format your response in Markdown.
+    """
+    
+    result = await call_groq([{"role": "user", "content": user_msg}], system=system_prompt)
+    return {"project": result}
+
+@app.post("/interview")
+async def interactive_interview(request: ChatRequest):
+    system_prompt = """You are AXIOM — an elite technical interviewer.
+    YOUR GOAL: Conduct a structured, one-question-at-a-time interview based on the user's resume and target job.
+    
+    RULES:
+    1. ASK EXACTLY ONE QUESTION per turn.
+    2. Do NOT provide answers or feedback until the user has actually answered the current question.
+    3. After the user answers, give a brief 'AXIOM FEEDBACK' (High/Mid/Low quality) and then ask the NEXT question.
+    4. After 4 questions, provide a final 'INTERVIEW VERDICT' (Hire/No Hire) with reasoning.
+    5. Stay in character — professional, sharp, challenging.
+    """
+    
+    # We'll use the existing chat logic but with this strict system prompt
+    result = await call_groq(request.messages, system=system_prompt)
+    return {"content": [{"text": result}]}
+
+@app.post("/negotiate")
+async def negotiate_api(request: JobRequirementRequest):
+    system_prompt = "You are a specialized salary negotiation coach and compensation analyst."
+    user_msg = f"""
+    JOB DESCRIPTION / ROLE:
+    {request.job_description}
+
+    CANDIDATE RESUME:
+    {request.resume_text}
+
+    TASK:
+    1. Estimate a target salary range based on the role and experience level.
+    2. Provide 3 specific 'talking points' based on achievements in the resume.
+    3. Generate a 'Negotiation Script' for a final round interview or offer call.
+    4. List 3 non-salary perks (e.g., equity, remote, sign-on) to ask for.
+    
+    Format your response in Markdown.
+    """
+    
+    result = await call_groq([{"role": "user", "content": user_msg}], system=system_prompt)
+    return {"negotiation": result}
+
+@app.post("/linkedin-optimize")
+async def linkedin_optimize_api(request: JobRequirementRequest):
+    system_prompt = "You are a LinkedIn personal branding expert."
+    user_msg = f"""
+    CANDIDATE RESUME:
+    {request.resume_text}
+
+    TARGET ROLE (OPTIONAL):
+    {request.job_description}
+
+    TASK:
+    1. Craft 3 different LinkedIn Headlines (Keyword-rich, Benefit-driven, and Creative).
+    2. Write a compelling 'About' section (first-person, professional yet human).
+    3. Suggest the top 5 'Skills' to feature on the profile.
+    
+    Format your response in Markdown.
+    """
+    
+    result = await call_groq([{"role": "user", "content": user_msg}], system=system_prompt)
+    return {"linkedin": result}
 
 @app.get("/skills")
 def get_all_skills():
