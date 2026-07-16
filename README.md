@@ -1,586 +1,163 @@
-# ⚡ ResumeAI – AI Resume Analyzer & Job Recommendation System
-
-> **An AI-powered Resume Intelligence Platform that analyzes resumes, scores ATS compatibility, detects skill gaps, and recommends the most suitable jobs using NLP and Machine Learning.**
-
+⚡ ResumeAI -- AI Resume Analyzer & Job Recommendation System
+> **An AI-powered Resume Intelligence Platform that analyzes resumes,
+> scores ATS compatibility, detects skill gaps, and recommends the most
+> suitable jobs using NLP and Machine Learning.**
 ![Python](https://img.shields.io/badge/Python-3.10+-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688)
 ![React](https://img.shields.io/badge/React-Frontend-61DAFB)
-![Machine Learning](https://img.shields.io/badge/Machine-Learning-orange)
+![ML](https://img.shields.io/badge/Machine-Learning-orange)
 ![NLP](https://img.shields.io/badge/NLP-spaCy-green)
-![License](https://img.shields.io/badge/License-MIT-success)
-
+![Copyright](https://img.shields.io/badge/Copyright-All%20Rights%20Reserved-red)
 ---
-
-# 📖 Overview
-
-ResumeAI is a Full Stack AI application designed to help job seekers improve their resumes through intelligent analysis. The platform extracts information from resumes, identifies technical skills, evaluates ATS compatibility, predicts job categories, and recommends the best matching job roles using Machine Learning.
-
-Unlike traditional resume checkers, ResumeAI combines Natural Language Processing (NLP), Machine Learning, and AI-generated insights to provide meaningful feedback and personalized recommendations.
-
+📑 Table of Contents
+Overview
+Features
+Architecture
+Tech Stack
+Project Structure
+Installation
+Environment Variables
+Usage
+API Endpoints
+Machine Learning Pipeline
+Algorithms Used
+Resume Scoring
+Sample Output
+Future Scope
+Author
+Copyright
 ---
-
-# ✨ Key Features
-
-## 📄 Resume Analysis
-- Upload PDF or DOCX resumes
-- Automatic resume parsing
-- Resume section identification
-- Contact information extraction
-- Education, Experience, Skills and Projects detection
-
----
-
-## 🧠 NLP Skill Extraction
-
-- Extracts 100+ technical skills
-- Skill normalization
-- Keyword frequency analysis
-- Named Entity Recognition
-- Resume keyword mapping
-
-Powered using:
-
-- spaCy
-- PhraseMatcher
-- Regular Expressions
-
----
-
-## 🤖 Machine Learning Job Recommendation
-
-The system compares the uploaded resume against a curated job database.
-
-### Techniques Used
-
-- TF-IDF Vectorization
-- Cosine Similarity
-- Feature Weighting
-- Top-K Ranking
-
-Output includes
-
-- Top 5 Job Matches
-- Match Percentage
-- Similarity Score
-- Missing Skills
-- Job Category
-
----
-
-## 📊 Resume Score (100 Points)
-
-| Category | Marks |
-|-----------|-------|
-| Skill Coverage | 30 |
-| Experience | 20 |
-| Projects | 15 |
-| Impact Metrics | 15 |
-| ATS Compatibility | 10 |
-| Action Verbs | 10 |
-| **Total** | **100** |
-
----
-
-## 💡 AI Suggestions
-
-Using Claude Sonnet API
-
-The platform generates:
-
-- Resume improvement tips
-- Better wording suggestions
-- Missing technologies
-- ATS optimization advice
-- Professional recommendations
-
----
-
-# 🏗 System Architecture
-
-```text
-                  +----------------------+
-                  |      React UI        |
-                  +----------+-----------+
-                             |
-                             |
-                     REST API Calls
-                             |
-                             ▼
-                  +----------------------+
-                  |     FastAPI API      |
-                  +----------+-----------+
-                             |
-        ----------------------------------------------
-        |            |              |                 |
-        ▼            ▼              ▼                 ▼
- Resume Parser   NLP Engine   ML Matching     AI Suggestions
- (PDF/DOCX)      (spaCy)      (TF-IDF)       (Claude API)
-        |            |              |                 |
-        ----------------------------------------------
-                             |
-                             ▼
-                     Analysis Result
-                             |
-                             ▼
-                     Interactive Dashboard
+📖 Overview
+ResumeAI is a full-stack AI-powered Resume Intelligence Platform built
+with React, FastAPI, NLP, and Machine Learning. It parses resumes,
+extracts skills, predicts job categories, scores ATS compatibility,
+detects missing skills, and recommends the best-matching jobs using
+TF-IDF and Cosine Similarity.
+✨ Features
+PDF & DOCX Resume Upload
+Resume Parsing
+Skill Extraction using spaCy
+Named Entity Recognition
+ATS Score
+Resume Score (100 points)
+Job Recommendation Engine
+Skill Gap Detection
+Claude AI Suggestions
+Experience Level Prediction
+Dashboard with Charts & Analytics
+🏗 Architecture
+``` text
+React Frontend
+      │
+ REST API
+      │
+FastAPI Backend
+ ├── Resume Parser
+ ├── NLP Engine
+ ├── TF-IDF Matcher
+ ├── Resume Scoring
+ ├── Category Prediction
+ └── Claude AI Integration
 ```
-
+🛠 Tech Stack
+Layer      Technology
 ---
-
-# 📂 Project Structure
-
-```text
-resume-analyzer/
-│
+Frontend   React, Vite
+Backend    FastAPI, Python
+NLP        spaCy, Regex, PhraseMatcher
+ML         TF-IDF, Cosine Similarity
+AI         Claude Sonnet
+Database   SQLite / PostgreSQL
+📂 Project Structure
+``` text
+resume-ai/
 ├── backend/
-│   ├── main.py
-│   ├── requirements.txt
-│   ├── parser.py
-│   ├── matcher.py
-│   ├── scoring.py
-│   ├── classifier.py
-│   └── jobs.json
-│
 ├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── hooks/
-│   │   ├── assets/
-│   │   └── App.jsx
-│   │
-│   ├── package.json
-│   └── vite.config.js
-│
 ├── README.md
 └── LICENSE
 ```
-
----
-
-# ⚙ Tech Stack
-
-## Frontend
-
-- React
-- Vite
-- JavaScript
-- HTML5
-- CSS3
-
----
-
-## Backend
-
-- Python
-- FastAPI
-- Uvicorn
-
----
-
-## Machine Learning
-
-- TF-IDF Vectorization
-- Cosine Similarity
-- Logistic Regression Style Classification
-
----
-
-## NLP
-
-- spaCy
-- PhraseMatcher
-- Regular Expressions
-
----
-
-## AI
-
-- Anthropic Claude Sonnet 4
-
----
-
-## Database
-
-- SQLite
-- PostgreSQL (Future Support)
-
----
-
-# 🚀 Installation
-
-## Clone Repository
-
-```bash
-git clone https://github.com/yourusername/resume-analyzer.git
-
-cd resume-analyzer
-```
-
----
-
-## Frontend Setup
-
-```bash
+🚀 Installation
+Frontend
+``` bash
 npm install
-
 npm run dev
 ```
-
-Application runs at
-
-```
-http://localhost:5173
-```
-
----
-
-## Backend Setup
-
-Navigate to backend
-
-```bash
+Backend
+``` bash
 cd backend
-```
-
-Install dependencies
-
-```bash
 pip install -r requirements.txt
+uvicorn main:app --reload
 ```
-
-Run server
-
-```bash
-uvicorn main:app --reload --port 8000
+🔐 Environment Variables
+``` env
+ANTHROPIC_API_KEY=your_api_key
+DATABASE_URL=sqlite:///resume.db
 ```
-
-Backend URL
-
-```
-http://localhost:8000
-```
-
----
-
-# 📦 Backend Dependencies
-
-```text
-FastAPI
-spaCy
-scikit-learn
-NumPy
-Pandas
-PyPDF2
-python-docx
-uvicorn
-```
-
-Install
-
-```bash
-pip install -r requirements.txt
-```
-
----
-
-# 🖥 Using the Application
-
-## Step 1
-
+▶️ Usage
 Upload Resume
-
-Supports
-
-- PDF
-- DOCX
-
----
-
-## Step 2
-
 Resume is parsed
-
-Extracts
-
-- Name
-- Email
-- Phone
-- Education
-- Experience
-- Skills
-- Projects
-
+Skills extracted
+Resume scored
+Jobs matched
+AI suggestions displayed
+🌐 API Endpoints
+Method   Endpoint   Description
 ---
-
-## Step 3
-
-Machine Learning Engine
-
-Calculates
-
-- Resume Score
-- ATS Score
-- Job Match %
-- Skill Frequency
-- Missing Skills
-
----
-
-## Step 4
-
-AI Suggestions
-
-Claude generates
-
-- Resume improvements
-- Better wording
-- Missing technologies
-- Professional feedback
-
----
-
-# 📈 Machine Learning Pipeline
-
-```text
-Resume
-   │
-   ▼
-Text Extraction
-   │
-   ▼
-Cleaning
-   │
-   ▼
-Skill Extraction
-   │
-   ▼
+POST     /upload    Upload resume
+POST     /analyze   Analyze resume
+GET      /jobs      List jobs
+GET      /health    Health check
+🤖 Machine Learning Pipeline
+Resume → Text Extraction → Cleaning → Skill Extraction → TF-IDF → Cosine
+Similarity → Ranking → Resume Score → AI Suggestions
+🧠 Algorithms Used
 TF-IDF Vectorization
-   │
-   ▼
 Cosine Similarity
-   │
-   ▼
-Top Job Recommendations
-   │
-   ▼
-Score Calculation
-   │
-   ▼
-AI Suggestions
-```
-
+Phrase Matching
+Regex
+Named Entity Recognition
+Weighted Scoring
+📊 Resume Scoring
+Criteria           Score
 ---
-
-# 🧪 Algorithms Used
-
-### NLP
-
-- Tokenization
-- Phrase Matching
-- Named Entity Recognition
-- Regex Extraction
-
+Skills                30
+Experience            20
+Projects              15
+Impact Metrics        15
+ATS                   10
+Action Verbs          10
+Total: 100
+📈 Sample Output
+Resume Score: 89/100
+ATS Score: 92%
+Category: AI Engineer
+Top Match: Machine Learning Engineer (95%)
+🔮 Future Scope
+Resume Builder
+Cover Letter Generator
+LinkedIn Analysis
+GitHub Analysis
+AI Interview Coach
+Recruiter Dashboard
+RAG Resume Review
+👨‍💻 Author
+Rashvandh A
+AI & Machine Learning Engineer | Full Stack Developer
 ---
-
-### Machine Learning
-
-- TF-IDF Vectorization
-- Cosine Similarity
-- Logistic Regression Classification
-- Weighted Scoring Model
-
----
-
-# 📊 Sample Output
-
-```text
-Resume Score : 86/100
-
-ATS Score : 91%
-
-Experience : Intermediate
-
-Predicted Category :
-Full Stack Developer
-
-Top Job Matches
-
-1. Full Stack Developer (94%)
-2. Software Engineer (91%)
-3. AI Engineer (88%)
-4. Backend Developer (86%)
-5. ML Engineer (84%)
-
-Missing Skills
-
-• Docker
-• Kubernetes
-• AWS
-• CI/CD
-```
-
----
-
-# 🔮 Future Improvements
-
-- Resume Builder
-- LinkedIn Profile Analysis
-- GitHub Repository Analysis
-- Cover Letter Generator
-- Interview Question Generator
-- AI Career Roadmap
-- Recruiter Dashboard
-- Resume Version Comparison
-- Company-specific ATS Optimization
-- RAG-based Resume Evaluation
-
----
-
-# 🎯 Learning Outcomes
-
-This project demonstrates practical implementation of
-
-- Full Stack Development
-- Machine Learning
-- Natural Language Processing
-- AI Integration
-- REST API Development
-- Resume Intelligence
-- Recommendation Systems
-- Software Engineering
-
----
-
-# 🎓 Viva Questions
-
-### What ML algorithms were used?
-
-- TF-IDF Vectorization
-- Cosine Similarity
-- Logistic Regression Classification
-
----
-
-### How are resumes matched?
-
-Each resume and job description is converted into TF-IDF vectors. Cosine Similarity measures semantic similarity, and the highest-ranked jobs are recommended.
-
----
-
-### How is the score calculated?
-
-A weighted scoring model evaluates
-
-- Skills
-- Projects
-- Experience
-- ATS Compatibility
-- Action Verbs
-- Quantified Achievements
-
-The weighted sum produces a score out of 100.
-
----
-
-### What NLP techniques are used?
-
-- Named Entity Recognition
-- Phrase Matching
-- Regular Expressions
-- Keyword Extraction
-
----
-
-# 👨‍💻 Author
-
-**ResumeAI**
-
-Advanced Full Stack AI Resume Intelligence Platform
-
-Developed using
-
-- React
-- FastAPI
-- Python
-- Machine Learning
-- NLP
-- Claude AI
-
----
-
-## 📜 License
-
-This project is licensed under the MIT License.
-
----
-
-## ⭐ Support
-
-If you found this project useful,
-
-⭐ Star the repository
-
-🍴 Fork the project
-
-📢 Share it with others|
-
-# 📄 Copyright & License
-
-## © Copyright Notice
-
-**Copyright © 2026 Rashvandh A. All Rights Reserved.**
-
-ResumeAI – AI Resume Analyzer & Job Recommendation System and all associated source code, documentation, designs, algorithms, machine learning models, user interface designs, assets, and related materials are the exclusive intellectual property of **Rashvandh A**.
-
-This repository is provided for viewing and demonstration purposes only.
-
-### All Rights Reserved
-
-Without prior written permission from the copyright owner, you may **NOT**:
-
-* Copy or reproduce any part of this project.
-* Modify or create derivative works.
-* Redistribute the source code or project files.
-* Publish this project under another name.
-* Use this project for commercial purposes.
-* Sell, sublicense, or monetize any part of this project.
-* Claim this work as your own.
-* Use the machine learning models, datasets, documentation, or UI design in another project.
-
-### Permitted Use
-
-You may:
-
-* View this repository for educational or portfolio demonstration purposes.
-* Reference the project with proper attribution when discussing or reviewing the work.
-
-You may **NOT** download, reuse, modify, distribute, or deploy this project without explicit written permission from the author.
-
-### Disclaimer
-
-This software is provided **"AS IS"**, without warranty of any kind, express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, and non-infringement.
-
-The author shall not be held liable for any claims, damages, or other liabilities arising from the use or inability to use this software.
-
-### Permission Requests
-
-For licensing, collaboration, academic use, commercial inquiries, or permission to use any portion of this project, please contact the author directly.
-
----
-
-## 👨‍💻 Author
-
-**Rashvandh A**
-
-AI & Machine Learning Developer • Full Stack Developer
-
-**Project:** ResumeAI – AI Resume Analyzer & Job Recommendation System
-
-**Year:** 2026
-
----
-
-**© 2026 Rashvandh A. All Rights Reserved.**
-
-Unauthorized copying, reproduction, modification, distribution, reverse engineering, or commercial use of this software, in whole or in part, is strictly prohibited without prior written permission from the copyright owner.
+📄 Copyright & License
+© Copyright 2026 Rashvandh A. All Rights Reserved.
+ResumeAI and all associated source code, documentation, machine learning
+models, algorithms, UI/UX designs, datasets, graphics, and assets are
+the exclusive intellectual property of Rashvandh A.
+This repository is provided solely for educational demonstration and
+portfolio purposes.
+You may NOT:
+Copy or reproduce this project.
+Modify or create derivative works.
+Redistribute the source code.
+Publish under another name.
+Sell or commercially use this project.
+Claim ownership of this work.
+Disclaimer
+This software is provided AS IS without warranty of any kind.
+© 2026 Rashvandh A. All Rights Reserved.
